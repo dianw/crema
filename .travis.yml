@@ -13,4 +13,4 @@ before_deploy:
 deploy:
   provider: script
   skip_cleanup: true
-  script: cd $TRAVIS_BUILD_DIR && git add dist && git commit -m "Deploy $TRAVIS_COMMIT ($TRAVIS_BUILD_ID)" && git push origin master && git subtree push --prefix dist origin gh-pages
+  script: cd $TRAVIS_BUILD_DIR && git remote add deploy git@github.com:$TRAVIS_REPO_SLUG.git && git add dist && git commit -m "Deploy $TRAVIS_COMMIT ($TRAVIS_BUILD_ID)" && git push deploy master && git subtree push --prefix dist deploy gh-pages
