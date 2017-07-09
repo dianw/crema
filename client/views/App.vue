@@ -26,19 +26,19 @@ export default {
         {
           text: 'Hash',
           to: {
-            name: 'home'
+            name: 'hash'
           }
         },
         {
           text: 'Encrypt/Decrypt',
           to: {
-            name: 'home'
+            name: 'encrypt-decrypt'
           }
         },
         {
           text: 'Key-Pair Gen',
           to: {
-            name: 'home'
+            name: 'key-pair-gen'
           }
         }
       ];
