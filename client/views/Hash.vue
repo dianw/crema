@@ -6,32 +6,39 @@
       </b-nav>
     </div>
     <div class="col-xs-12 col-md-8 col-lg-9">
-      <b-form @submit.prevent="hashText">
-        <div class="form-group">
-          <label for="input">Text Input</label>
-          <b-form-input id="input" v-model="inputText" :rows="5" ref="input" textarea autofocus></b-form-input>
+      <b-nav tabs>
+        <b-nav-item :active="isText" @click="isText = true">Text</b-nav-item>
+        <b-nav-item :active="!isText" @click="isText = false">File</b-nav-item>
+      </b-nav>
+      <br />
+      <b-form @submit.prevent>
+        <div class="form-group" v-if="isText">
+          <label for="text-input">Text Input</label>
+          <b-form-input id="text-input" v-model="inputText" :rows="3" ref="inputText" @input="hash" textarea autofocus></b-form-input>
         </div>
-        <div class="form-group">
-          <b-button type="submit" variant="primary" size="lg">Calculate {{ hashType.text }}</b-button>
+        <div class="form-group" v-if="!isText">
+          <b-form-file id="file-input" v-model="inputFile" type="file" ref="inputFile" @input="hash"></b-form-file>
         </div>
       </b-form>
+      <br />
       <div class="form-group">
-        <label for="output">Output</label>
-        <b-form-input id="output" v-model="hashOutputHex" :rows="5" textarea readonly></b-form-input>
+        <label for="hex-output">Hex Output</label>
+        <b-form-input id="hex-output" v-model="hashOutputHex" :rows="5" textarea readonly></b-form-input>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import forge from 'node-forge';
 import { mapState } from 'vuex';
 
 export default {
   data() {
     return {
       hashType: {},
-      inputText: ''
+      inputText: '',
+      inputFile: {},
+      isText: true
     }
   },
   computed: {
@@ -56,19 +63,23 @@ export default {
       ];
     },
     ...mapState({
-      hashInputText: 'hashInputText',
+      hashInput: 'hashInput',
       hashOutputHex: state => state.hashOutput.hex
     })
   },
   methods: {
     changeAlg(hashType) {
-      this.$refs.input.focus();
-      this.hashType = hashType || this.hashTypes[0];
-      this.inputText = this.hashInputText;
-      this.hashText();
+      this.hashType = hashType || this.hashTypes[2];
+      this.isText = this.hashInput.isText;
+      if (this.isText) {
+        this.inputText = this.hashInput.value;
+      } else {
+        this.inputFile = this.hashInput.value;
+      }
+      this.hash();
     },
-    hashText() {
-      this.$store.dispatch('hashText', { alg: this.hashType.alg, text: this.inputText });
+    hash() {
+      this.$store.dispatch('hash', { alg: this.hashType.alg, isText: this.isText, input: this.isText ? this.inputText : this.inputFile });
     }
   },
   mounted() {

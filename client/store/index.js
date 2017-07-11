@@ -5,7 +5,10 @@ import forge from 'node-forge';
 Vue.use(Vuex);
 
 const state = {
-  hashInputText: '',
+  hashInput: {
+    isText: true,
+    value: ''
+  },
   hashOutput: {
     md: null,
     hex: null
@@ -13,21 +16,35 @@ const state = {
 }
 
 const mutations = {
-  setHashInputText(state, inputText) {
-    state.hashInputText = inputText;
+  setHashInput(state, { isText, value }) {
+    state.hashInput.isText = isText;
+    state.hashInput.value = value;
   },
-  setHashOutputHexText(state, md) {
+  setHashOutput(state, md) {
     state.hashOutput.md = md;
-    state.hashOutput.hex = md.toHex();
+    state.hashOutput.hex = state.hashInput.value === '' ? '' : md.toHex();
   }
 }
 
 const actions = {
-  hashText({ commit, state }, { alg, text }) {
+  hash({ commit, state }, { alg, input, isText }) {
     const md = forge.md[alg].create();
-    md.update(text);
-    commit('setHashInputText', text);
-    commit('setHashOutputHexText', md.digest());
+    if (isText) {
+      md.update(input);
+      commit('setHashInput', { isText: true, value: input });
+      commit('setHashOutput', md.digest());
+    } else {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const binary = new Uint8Array(reader.result);
+        for (let i = 0; i < binary.length; i++) {
+          md.update(String.fromCharCode(binary[i]));
+        }
+        commit('setHashInput', { isText: false, value: input });
+        commit('setHashOutput', md.digest());
+      };
+      reader.readAsArrayBuffer(input);
+    }
     return state.hashOutput;
   }
 }
