@@ -6,18 +6,18 @@
       </b-nav>
     </div>
     <div class="col-xs-12 col-md-8 col-lg-9">
-      <b-form @submit.prevent="hashText(hashType.alg, inputText)">
+      <b-form @submit.prevent="hashText">
         <div class="form-group">
           <label for="input">Text Input</label>
-          <b-form-input id="input" v-model="inputText" :value="hashInputText"></b-form-input>
+          <b-form-input id="input" v-model="inputText" :rows="5" ref="input" textarea autofocus></b-form-input>
         </div>
         <div class="form-group">
-          <b-button type="submit" variant="primary">{{ hashType.text }}</b-button>
+          <b-button type="submit" variant="primary" size="lg">Calculate {{ hashType.text }}</b-button>
         </div>
       </b-form>
       <div class="form-group">
         <label for="output">Output</label>
-        <b-form-input id="output" v-model="hashOutputHex" readonly></b-form-input>
+        <b-form-input id="output" v-model="hashOutputHex" :rows="5" textarea readonly></b-form-input>
       </div>
     </div>
   </div>
@@ -62,16 +62,17 @@ export default {
   },
   methods: {
     changeAlg(hashType) {
-      this.hashType = hashType;
-      this.hashText(hashType.alg, this.inputText);
+      this.$refs.input.focus();
+      this.hashType = hashType || this.hashTypes[0];
+      this.inputText = this.hashInputText;
+      this.hashText();
     },
-    hashText(alg, text) {
-      this.$store.dispatch('hashText', { alg, text });
+    hashText() {
+      this.$store.dispatch('hashText', { alg: this.hashType.alg, text: this.inputText });
     }
   },
   mounted() {
-    this.inputText = this.hashInputText;
-    this.hashType = this.hashTypes[0];
+    this.changeAlg();
   }
 }
 </script>

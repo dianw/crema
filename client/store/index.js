@@ -23,13 +23,12 @@ const mutations = {
 }
 
 const actions = {
-  hashText({ commit }, {alg, text}) {
+  hashText({ commit, state }, { alg, text }) {
     const md = forge.md[alg].create();
     md.update(text);
-    const digest = md.digest();
     commit('setHashInputText', text);
-    commit('setHashOutputHexText', digest);
-    return digest;
+    commit('setHashOutputHexText', md.digest());
+    return state.hashOutput;
   }
 }
 
