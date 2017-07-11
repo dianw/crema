@@ -1,26 +1,35 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
+import forge from 'node-forge';
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 const state = {
-  count: 0
+  hashInputText: '',
+  hashOutput: {
+    md: null,
+    hex: null
+  }
 }
 
 const mutations = {
-  INCREMENT (state) {
-    state.count++
+  setHashInputText(state, inputText) {
+    state.hashInputText = inputText;
   },
-  DECREMENT (state) {
-    state.count--
+  setHashOutputHexText(state, md) {
+    state.hashOutput.md = md;
+    state.hashOutput.hex = md.toHex();
   }
 }
 
 const actions = {
-  incrementAsync ({ commit }) {
-    setTimeout(() => {
-      commit('INCREMENT')
-    }, 200)
+  hashText({ commit }, {alg, text}) {
+    const md = forge.md[alg].create();
+    md.update(text);
+    const digest = md.digest();
+    commit('setHashInputText', text);
+    commit('setHashOutputHexText', digest);
+    return digest;
   }
 }
 
