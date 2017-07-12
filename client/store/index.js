@@ -27,6 +27,22 @@ const mutations = {
 }
 
 const actions = {
+  generateRandom(ctx, bytes = 16) {
+    const randomBytes = forge.random.getBytesSync(bytes);
+    return {
+      bytes: randomBytes,
+      hex: forge.util.bytesToHex(randomBytes)
+    }
+  },
+  cipher({commit}, { alg, iv, input, password }) {
+    const salt = forge.random.getBytesSync(128);
+    const key = forge.pkcs5.pbkdf2(password, salt, 16, 16);
+    const cipher = forge.cipher.createCipher(alg, key);
+    cipher.start({ iv: iv.bytes });
+    cipher.update(forge.util.createBuffer(input));
+    cipher.finish();
+    return cipher.output;
+  },
   hash({ commit, state }, { alg, input, isText }) {
     const md = forge.md[alg].create();
     if (isText) {
