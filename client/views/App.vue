@@ -30,17 +30,23 @@ export default {
           }
         },
         {
-          text: 'Encrypt/Decrypt',
+          text: 'PKI',
           to: {
-            name: 'encrypt-decrypt'
+            name: 'pki'
           }
         },
-        {
-          text: 'Key-Pair Gen',
-          to: {
-            name: 'key-pair-gen'
-          }
-        }
+        // {
+        //   text: 'Encrypt/Decrypt',
+        //   to: {
+        //     name: 'encrypt-decrypt'
+        //   }
+        // },
+        // {
+        //   text: 'Key-Pair Gen',
+        //   to: {
+        //     name: 'key-pair-gen'
+        //   }
+        // }
       ];
     }
   }

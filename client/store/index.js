@@ -34,14 +34,20 @@ const actions = {
       hex: forge.util.bytesToHex(randomBytes)
     }
   },
-  cipher({commit}, { alg, iv, input, password }) {
-    const salt = forge.random.getBytesSync(128);
-    const key = forge.pkcs5.pbkdf2(password, salt, 16, 16);
-    const cipher = forge.cipher.createCipher(alg, key);
-    cipher.start({ iv: iv.bytes });
-    cipher.update(forge.util.createBuffer(input));
-    cipher.finish();
-    return cipher.output;
+  generateKeyPair(ctx, bits = 2048) {
+    return new Promise((resolve, reject) => {
+      forge.pki.rsa.generateKeyPair({ bits, workers: 2 }, (err, keyPair) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            keyPair,
+            privateKeyPem: forge.pki.privateKeyToPem(keyPair.privateKey),
+            publicKeyPem: forge.pki.publicKeyToPem(keyPair.publicKey)
+          });
+        }
+      });
+    });
   },
   hash({ commit, state }, { alg, input, isText }) {
     const md = forge.md[alg].create();
