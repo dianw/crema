@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import createPersistedState from 'vuex-persistedstate';
 import forge from 'node-forge';
+
 import countries from 'store/countries';
 
 Vue.use(Vuex);
@@ -111,7 +113,8 @@ const actions = {
 const store = new Vuex.Store({
   state,
   mutations,
-  actions
+  actions,
+  plugins: [ createPersistedState() ]
 })
 
 export default store
