@@ -16,10 +16,10 @@
         <b-nav-item :active="tab === 1" @click="tab = 1">Public Key</b-nav-item>
       </b-nav>
       <div class="form-group" v-if="tab === 0">
-        <b-form-input id="private-key-pem" v-model="privateKeyPem" :class="[ 'monospace' ]" :rows="20" textarea readonly></b-form-input>
+        <b-form-input id="private-key-pem" v-model="keyPair.privateKeyPem" :class="[ 'monospace' ]" :rows="20" textarea readonly></b-form-input>
       </div>
       <div class="form-group" v-if="tab === 1">
-        <b-form-input id="public-key-pem" v-model="publicKeyPem" :class="[ 'monospace' ]" :rows="20" textarea readonly></b-form-input>
+        <b-form-input id="public-key-pem" v-model="keyPair.publicKeyPem" :class="[ 'monospace' ]" :rows="20" textarea readonly></b-form-input>
       </div>
     </div>
   </div>
@@ -32,25 +32,22 @@ export default {
   data() {
     return {
       keySize: 2048,
-      keyPair: null,
-      privateKeyPem: null,
-      publicKeyPem: null,
       tab: 0
     }
   },
   computed: {
     keySizes() {
       return [ 512, 1024, 2048, 4096 ]
+    },
+    keyPair() {
+      const keyPairs = this.$store.state.keyPairs;
+      return keyPairs.length > 0 ? keyPairs[keyPairs.length - 1] : null;
     }
   },
   methods: {
     generateKeyPair() {
       this.keyPair = null;
-      this.$store.dispatch('generateKeyPair', this.keySize).then(keyPair => {
-        this.keyPair = keyPair.keyPair;
-        this.privateKeyPem = keyPair.privateKeyPem;
-        this.publicKeyPem = keyPair.publicKeyPem;
-      });
+      this.$store.dispatch('generateKeyPair', this.keySize);
     }
   }
 }
