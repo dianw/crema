@@ -1,10 +1,14 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import forge from 'node-forge';
+import countries from 'store/countries';
 
 Vue.use(Vuex);
 
 const state = {
+  countries,
+  csr: null,
+  csrSubject: [],
   hashInput: {
     isText: true,
     value: ''
@@ -12,10 +16,25 @@ const state = {
   hashOutput: {
     md: null,
     hex: null
-  }
+  },
+  keyPairs: [],
+  keySizes: [ 512, 1024, 2048, 4096 ]
 }
 
 const mutations = {
+  setCSR(state, csr) {
+    state.csr = csr;
+  },
+  setCSRSubject(state, subject) {
+    const csrSubject = [];
+    for (const s in subject) {
+      csrSubject.push({
+        name: s,
+        value: subject[s]
+      });
+    }
+    state.csrSubject = csrSubject;
+  },
   setHashInput(state, { isText, value }) {
     state.hashInput.isText = isText;
     state.hashInput.value = value;
@@ -23,6 +42,9 @@ const mutations = {
   setHashOutput(state, md) {
     state.hashOutput.md = md;
     state.hashOutput.hex = state.hashInput.value === '' ? '' : md.toHex();
+  },
+  addKeyPair(state, keyPair) {
+    state.keyPairs.push(keyPair);
   }
 }
 
@@ -34,17 +56,32 @@ const actions = {
       hex: forge.util.bytesToHex(randomBytes)
     }
   },
-  generateKeyPair(ctx, bits = 2048) {
+  generateCSR({ commit, dispatch, state }, { keyPairBits }) {
+    dispatch('generateKeyPair', keyPairBits).then(() => {
+      const keyPair = state.keyPairs[state.keyPairs.length - 1].keyPair;
+      const csr = forge.pki.createCertificationRequest();
+      csr.publicKey = keyPair.publicKey;
+      csr.setSubject(state.csrSubject);
+      csr.sign(keyPair.privateKey);
+      commit('setCSR', {
+        csr: csr,
+        pem: forge.pki.certificationRequestToPem(csr)
+      });
+    });
+  },
+  generateKeyPair({ commit }, bits = 2048) {
     return new Promise((resolve, reject) => {
       forge.pki.rsa.generateKeyPair({ bits, workers: 2 }, (err, keyPair) => {
         if (err) {
           reject(err);
         } else {
-          resolve({
+          const result = {
             keyPair,
             privateKeyPem: forge.pki.privateKeyToPem(keyPair.privateKey),
             publicKeyPem: forge.pki.publicKeyToPem(keyPair.publicKey)
-          });
+          };
+          commit("addKeyPair", result);
+          resolve(result);
         }
       });
     });

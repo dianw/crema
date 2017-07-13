@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import forge from 'node-forge';
+import { mapState } from 'vuex';
 
 export default {
   data() {
@@ -36,13 +36,13 @@ export default {
     }
   },
   computed: {
-    keySizes() {
-      return [ 512, 1024, 2048, 4096 ]
-    },
     keyPair() {
       const keyPairs = this.$store.state.keyPairs;
       return keyPairs.length > 0 ? keyPairs[keyPairs.length - 1] : null;
-    }
+    },
+    ...mapState({
+      keySizes: 'keySizes'
+    })
   },
   methods: {
     generateKeyPair() {
@@ -52,9 +52,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.monospace {
-  font-family: monospace;
-}
-</style>

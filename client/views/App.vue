@@ -58,4 +58,7 @@ body {
   padding-top: 4.5rem;
   padding-bottom: 4.5rem;
 }
+.monospace {
+  font-family: monospace;
+}
 </style>
