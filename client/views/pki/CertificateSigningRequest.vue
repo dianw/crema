@@ -63,7 +63,7 @@ export default {
       countries: 'countries',
       csr: 'csr',
       csrSubject: 'csrSubject',
-      keySizes: 'keySizes'
+      keySizes: state => state.keyPair.keySizes
     })
   },
   methods: {

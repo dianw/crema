@@ -4,6 +4,7 @@ import createPersistedState from 'vuex-persistedstate';
 import forge from 'node-forge';
 
 import countries from 'store/countries';
+import keyPair from 'store/key-pair';
 
 Vue.use(Vuex);
 
@@ -18,9 +19,7 @@ const state = {
   hashOutput: {
     md: null,
     hex: null
-  },
-  keyPairs: [],
-  keySizes: [ 512, 1024, 2048, 4096 ]
+  }
 }
 
 const mutations = {
@@ -44,9 +43,6 @@ const mutations = {
   setHashOutput(state, md) {
     state.hashOutput.md = md;
     state.hashOutput.hex = state.hashInput.value === '' ? '' : md.toHex();
-  },
-  addKeyPair(state, keyPair) {
-    state.keyPairs.push(keyPair);
   }
 }
 
@@ -59,8 +55,7 @@ const actions = {
     }
   },
   generateCSR({ commit, dispatch, state }, { keyPairBits }) {
-    dispatch('generateKeyPair', keyPairBits).then(() => {
-      const keyPair = state.keyPairs[state.keyPairs.length - 1].keyPair;
+    dispatch('generateKeyPair', keyPairBits).then(keyPair => {
       const csr = forge.pki.createCertificationRequest();
       csr.publicKey = keyPair.publicKey;
       csr.setSubject(state.csrSubject);
@@ -68,23 +63,6 @@ const actions = {
       commit('setCSR', {
         csr: csr,
         pem: forge.pki.certificationRequestToPem(csr)
-      });
-    });
-  },
-  generateKeyPair({ commit }, bits = 2048) {
-    return new Promise((resolve, reject) => {
-      forge.pki.rsa.generateKeyPair({ bits, workers: 2 }, (err, keyPair) => {
-        if (err) {
-          reject(err);
-        } else {
-          const result = {
-            keyPair,
-            privateKeyPem: forge.pki.privateKeyToPem(keyPair.privateKey),
-            publicKeyPem: forge.pki.publicKeyToPem(keyPair.publicKey)
-          };
-          commit("addKeyPair", result);
-          resolve(result);
-        }
       });
     });
   },
@@ -114,7 +92,10 @@ const store = new Vuex.Store({
   state,
   mutations,
   actions,
-  plugins: [ createPersistedState() ]
+  plugins: [ createPersistedState() ],
+  modules: {
+    keyPair
+  }
 })
 
 export default store
