@@ -1,38 +1,40 @@
 <template>
   <div class="row">
     <div class="col-xs-12 col-md-4 col-lg-3">
-      <b-nav vertical pills>
-        <b-nav-item v-for="h in hashTypes" :key="h" :active="hashType.alg === h.alg" @click="changeAlg(h)">{{ h.text }}</b-nav-item>
-      </b-nav>
+      <sidenav :tabs="hashTypes" @link-click="changeAlg"></sidenav>
     </div>
     <div class="col-xs-12 col-md-8 col-lg-9">
-      <b-nav tabs>
-        <b-nav-item :active="isText" @click="isText = true">Text</b-nav-item>
-        <b-nav-item :active="!isText" @click="isText = false">File</b-nav-item>
-      </b-nav>
-      <br />
-      <b-form @submit.prevent>
-        <div class="form-group" v-if="isText">
-          <label for="text-input">Text Input</label>
-          <b-form-input id="text-input" v-model="inputText" :rows="3" ref="inputText" @input="hash" textarea autofocus></b-form-input>
+      <b-card>
+        <b-nav slot="header" tabs class="card-header-tabs">
+          <b-nav-item :active="isText" @click="isText = true">Text</b-nav-item>
+          <b-nav-item :active="!isText" @click="isText = false">File</b-nav-item>
+        </b-nav>
+        <b-form @submit.prevent>
+          <div class="form-group" v-if="isText">
+            <label for="text-input">Text Input</label>
+            <b-form-input id="text-input" v-model="inputText" :rows="3" ref="inputText" @input="hash" textarea autofocus></b-form-input>
+          </div>
+          <div class="form-group" v-if="!isText">
+            <b-form-file id="file-input" v-model="inputFile" type="file" ref="inputFile" @input="hash"></b-form-file>
+          </div>
+        </b-form>
+        <div class="form-group">
+          <label for="hex-output">Computed {{ hashType.title }}</label>
+          <b-form-input id="hex-output" v-model="hashOutputHex" :rows="5" textarea readonly></b-form-input>
         </div>
-        <div class="form-group" v-if="!isText">
-          <b-form-file id="file-input" v-model="inputFile" type="file" ref="inputFile" @input="hash"></b-form-file>
-        </div>
-      </b-form>
-      <br />
-      <div class="form-group">
-        <label for="hex-output">Hex Output</label>
-        <b-form-input id="hex-output" v-model="hashOutputHex" :rows="5" textarea readonly></b-form-input>
-      </div>
+      </b-card>
     </div>
   </div>
 </template>
 
 <script>
+import Sidenav from 'components/Sidenav';
 import { mapState } from 'vuex';
 
 export default {
+  components: {
+    Sidenav
+  },
   data() {
     return {
       hashType: {},
@@ -45,19 +47,20 @@ export default {
     hashTypes() {
       return [
         {
-          text: 'MD5',
+          title: 'MD5',
           alg: 'md5'
         },
         {
-          text: 'SHA-1',
+          title: 'SHA-1',
           alg: 'sha1'
         },
         {
-          text: 'SHA-256',
-          alg: 'sha256'
+          title: 'SHA-256',
+          alg: 'sha256',
+          active: true
         },
         {
-          text: 'SHA-512',
+          title: 'SHA-512',
           alg: 'sha512'
         }
       ];

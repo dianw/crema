@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <b-card>
     <b-form @submit.prevent="generateCSR">
       <div class="form-group">
         <label for="key-size">Key Size</label>
@@ -37,7 +37,7 @@
       <label for="csr">Certificate Signing Request</label>
       <b-form-input id="csr" v-model="csr.pem" class="monospace" :rows="20" textarea readonly></b-form-input>
     </div>
-  </div>
+  </b-card>
 </template>
 
 <script>

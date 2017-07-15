@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <b-card>
     <b-form @submit.prevent="genKeyPair">
       <div class="form-group">
         <label for="key-size">Key Size</label>
@@ -22,7 +22,7 @@
         <b-form-input id="public-key-pem" v-model="pem.publicKey" :class="[ 'monospace' ]" :rows="20" textarea readonly></b-form-input>
       </div>
     </div>
-  </div>
+  </b-card>
 </template>
 
 <script>
