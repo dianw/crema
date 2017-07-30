@@ -40,11 +40,11 @@
   ],
   "dependencies": {
     "babel-runtime": "^6.18.0",
-    "bootstrap-vue": "^0.18.0",
     "node-forge": "^0.7.1",
     "promise-polyfill": "^6.0.2",
     "vue": "^2.2.0",
     "vue-router": "^2.0.0",
+    "vuetify": "^0.14.7",
     "vuex": "^2.0.0",
     "vuex-persistedstate": "^2.0.0",
     "vuex-router-sync": "^4.0.0"

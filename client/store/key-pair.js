@@ -32,6 +32,12 @@ const actions = {
       publicKey: forge.pki.publicKeyToPem(keyPair.publicKey)
     }
   },
+  keyPairToOpenSSH(ctx, { keyPair, passphrase, comment }) {
+    return {
+      privateKey: forge.ssh.privateKeyToOpenSSH(keyPair.privateKey, passphrase),
+      publicKey: forge.ssh.publicKeyToOpenSSH(keyPair.publicKey, comment)
+    }
+  },
   saveKeyPair({ commit }, { name, keyPair }) {
     if (keyPair && keyPair.privateKey && keyPair.publicKey) {
       if (!name || name.trim() === '') {

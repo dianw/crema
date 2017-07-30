@@ -18,7 +18,7 @@ export default new Router({
     },
     {
       name: 'hash',
-      path: '/hash',
+      path: '/hash/:alg',
       component: Hash
     },
     {

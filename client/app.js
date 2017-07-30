@@ -1,13 +1,13 @@
 import Vue from 'vue';
-import BootstrapVue from 'bootstrap-vue';
+import Vuetify from 'vuetify';
 import { sync } from 'vuex-router-sync';
 import App from 'views/App';
 import router from 'router';
 import store from 'store';
 
-Vue.use(BootstrapVue);
+Vue.use(Vuetify);
 
-sync(store, router)
+sync(store, router);
 
 const app = new Vue({
   router,
@@ -15,4 +15,4 @@ const app = new Vue({
   ...App
 })
 
-export { app, router, store }
+export { app, router, store };
