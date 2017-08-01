@@ -1,74 +1,75 @@
 <template>
-  <b-card>
-    <navtab slot="header" :tabs="tabs" card></navtab>
-    <b-form @submit.prevent="genKeyPair">
-      <div class="form-group">
-        <label for="key-size">Key Size</label>
-        <b-form-select id="key-size" v-model="keySize" :options="keySizes"></b-form-select>
-      </div>
-      <div class="form-group">
-        <label for="passphrase">Passphrase</label>
-        <b-form-input id="passphrase" type="password" v-model="opensshParam.passphrase"></b-form-input>
-      </div>
-      <div class="form-group">
-        <label for="comment">Comment</label>
-        <b-form-input id="comment" v-model="opensshParam.comment"></b-form-input>
-      </div>
-      <div class="form-group">
-        <b-button type="submit" size="lg" variant="primary">Generate Key Pair</b-button>
-      </div>
-    </b-form>
-    <br />
-    <div v-if="keyPair">
-      <navtab :tabs="[{ title: 'Private Key' }, { title: 'Public Key' }]" @link-click="(t, i) => tab = i"></navtab>
-      <div class="form-group" v-if="tab === 0">
-        <b-form-input id="private-key-pem" v-model="pem.privateKey" :class="[ 'monospace' ]" :rows="20" textarea readonly></b-form-input>
-      </div>
-      <div class="form-group" v-if="tab === 1">
-        <b-form-input id="public-key-pem" v-model="pem.publicKey" :class="[ 'monospace' ]" :rows="20" textarea readonly></b-form-input>
-      </div>
+  <div>
+    <div class="mb-3">
+      <p class="mb-0">Key Size</p>
+      <v-btn-toggle :items="keySizes.map(k => ({ text: k, value: k }))" v-model="keySize"></v-btn-toggle>
+      <v-btn primary @click="genKeyPair" :loading="generating">
+        Generate Key Pair
+      </v-btn>
     </div>
-  </b-card>
+
+    <v-tabs v-if="pem && !generating" dark fixed>
+      <v-tabs-bar slot="activators" class="blue darken-4">
+        <v-tabs-slider class="orange darken-2"></v-tabs-slider>
+        <v-tabs-item href="#tab-1">
+          Private Key
+        </v-tabs-item>
+        <v-tabs-item href="#tab-2">
+          Public Key
+        </v-tabs-item>
+        <v-tabs-item href="#tab-3">
+          SSH Public Key
+        </v-tabs-item>
+      </v-tabs-bar>
+      <v-tabs-content id="tab-1">
+        <v-card flat>
+          <v-card-text>
+            <code class="pa-2" v-text="pem.privateKey"></code>
+          </v-card-text>
+        </v-card>
+      </v-tabs-content>
+      <v-tabs-content id="tab-2">
+        <v-card flat>
+          <v-card-text>
+            <code class="pa-2" v-text="pem.publicKey"></code>
+          </v-card-text>
+        </v-card>
+      </v-tabs-content>
+      <v-tabs-content id="tab-3">
+        <v-card flat>
+          <v-card-text>
+            <v-text-field multi-line disabled rows="15" v-model="ssh.publicKey" style="font-family: monospace;"></v-text-field>
+          </v-card-text>
+        </v-card>
+      </v-tabs-content>
+    </v-tabs>
+  </div>
 </template>
 
 <script>
-// import Navtab from 'components/Navtab';
 import { mapState, mapActions } from 'vuex';
 
 export default {
-  components: {
-    // Navtab
-  },
-  data() {
-    return {
-      keyPair: null,
-      keySize: 2048,
-      opensshParam: {
-        passphrase: '',
-        comment: ''
-      },
-      pem: {},
-      ssh: {},
-      tab: 0
-    }
-  },
-  computed: {
-    tabs() {
-      return [
-        {
-          title: 'Generate'
-        },
-        {
-          title: 'Saved Keys'
-        }
-      ]
+  data: () => ({
+    generating: false,
+    keyPair: null,
+    keySize: 2048,
+    opensshParam: {
+      passphrase: '',
+      comment: ''
     },
+    pem: null,
+    ssh: null,
+    tab: 0
+  }),
+  computed: {
     ...mapState({
       keySizes: state => state.keyPair.keySizes
     })
   },
   methods: {
     genKeyPair() {
+      this.generating = true;
       this.generateKeyPair(this.keySize).then(keyPair => {
         return this.keyPair = keyPair;
       }).then(keyPair => {
@@ -78,6 +79,7 @@ export default {
         this.keyPairToOpenSSH({ keyPair, ...this.opensshParam }).then(ssh => {
           this.ssh = ssh;
         });
+        this.generating = false;
       });
     },
     ...mapActions([

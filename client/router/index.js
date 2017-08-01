@@ -6,7 +6,7 @@ import PKI from 'views/PKI';
 import PKICSR from 'views/pki/CertificateSigningRequest';
 import PKIKeyPairGen from 'views/pki/KeyPairGenerator';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   mode: 'hash',

@@ -6,7 +6,7 @@
       </v-toolbar>
       <v-list dense>
         <template v-for="menu in menus">
-          <v-list-tile v-if="!menu.sub" :key="menu.text" :to="menu.to">
+          <v-list-tile v-if="!menu.sub" :value="routeMatched(menu.to.name)" :key="menu.text" :to="menu.to">
             <v-list-tile-action>
               <v-icon>{{ menu.icon }}</v-icon>
             </v-list-tile-action>
@@ -14,7 +14,7 @@
               <v-list-tile-title>{{ menu.text }}</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
-          <v-list-group v-if="menu.sub" :value="menu.to.name === $route.name" :key="menu.text">
+          <v-list-group v-if="menu.sub" :value="routeMatched(menu.to.name)" :key="menu.text">
             <v-list-tile slot="item">
               <v-list-tile-action>
                 <v-icon>{{ menu.icon }}</v-icon>
@@ -46,7 +46,7 @@
         </v-card-text>
       </v-card>
     </main>
-    <v-footer absolute>
+    <v-footer class="mt-5">
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
@@ -127,7 +127,10 @@ export default {
         },
         sub: [
           {
-            text: 'RSA Key-Pair'
+            text: 'RSA Key-Pair',
+            to: {
+              name: 'key-pair-gen'
+            }
           },
           {
             text: 'Certificate Signing Request'
@@ -135,6 +138,12 @@ export default {
         ]
       }
     ])
+  },
+  methods: {
+    routeMatched(routeName) {
+      return this.$route.matched
+          .reduce((m, v) => v.name === routeName || m, false);
+    }
   }
 }
 </script>
