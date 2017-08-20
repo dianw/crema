@@ -25,6 +25,11 @@ module.exports = {
   modules: [
     '@nuxtjs/font-awesome'
   ],
+
+  plugins: [
+    '~/plugins/bootstrap-vue',
+    '~/plugins/vue-no-ssr'
+  ],
   /*
   ** Build configuration
   */

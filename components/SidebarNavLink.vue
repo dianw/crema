@@ -13,20 +13,17 @@ export default {
       type: String,
       default: ''
     },
-    url: {
-      type: String,
-      default: ''
-    },
     to: {
       type: Object,
-      default: ''
+      default: () => ({ name: 'index' })
     },
     icon: {
       type: String,
       default: ''
     },
     badge: {
-      default: ''
+      type: Object,
+      default: () => ({})
     }
   }
 }

@@ -2,7 +2,9 @@
   <div class="app">
     <AppHeader/>
     <div class="app-body">
-      <Sidebar :navItems="nav"/>
+      <no-ssr>
+        <Sidebar :navItems="nav"/>
+      </no-ssr>
       <main class="main">
         <breadcrumb :list="list"/>
         <div class="container-fluid">
@@ -34,6 +36,33 @@ export default {
           name: 'Dashboard',
           to: { name: 'index' },
           icon: 'fa fa-dashboard'
+        },
+        {
+          name: 'Hash',
+          // to: { name: 'index' },
+          icon: 'fa fa-key',
+          children: [
+            {
+              name: 'SHA-512',
+              to: { name: 'index' },
+              icon: 'fa fa-chevron-right'
+            },
+            {
+              name: 'SHA-256',
+              to: { name: 'index' },
+              icon: 'fa fa-chevron-right'
+            },
+            {
+              name: 'SHA-1',
+              to: { name: 'index' },
+              icon: 'fa fa-chevron-right'
+            },
+            {
+              name: 'MD5',
+              to: { name: 'index' },
+              icon: 'fa fa-chevron-right'
+            }
+          ]
         }
       ]
     }

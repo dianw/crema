@@ -1,7 +1,8 @@
 <template>
   <footer class="app-footer">
-    <a href="http://coreui.io">CoreUI</a> &copy; 2017 creativeLabs.
-    <span class="float-right">Powered by <a href="http://coreui.io">CoreUI</a></span>
+    <span class="float-right">
+      &copy; {{ new Date().getFullYear() }} - <a href="https://github.com/dianw" target="_blank">Dian Aditya</a>
+    </span>
   </footer>
 </template>
 <script>
