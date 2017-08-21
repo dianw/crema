@@ -1,5 +1,5 @@
 <template>
-  <router-link tag="li" class="nav-item nav-dropdown" :to="url" disabled>
+  <router-link tag="li" class="nav-item nav-dropdown" :to="to" disabled>
     <div class="nav-link nav-dropdown-toggle" @click="handleClick"><i :class="icon"></i> {{name}}</div>
     <ul class="nav-dropdown-items">
       <slot></slot>
@@ -14,9 +14,9 @@ export default {
       type: String,
       default: ''
     },
-    url: {
-      type: String,
-      default: ''
+    to: {
+      type: Object,
+      default: () => ({ name: 'index' })
     },
     icon: {
       type: String,

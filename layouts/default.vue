@@ -1,10 +1,12 @@
 <template>
   <div class="app">
-    <AppHeader/>
+    <AppHeader />
     <div class="app-body">
-      <Sidebar :navItems="nav"/>
+      <no-ssr>
+        <Sidebar :navItems="nav"/>
+      </no-ssr>
       <main class="main">
-        <breadcrumb :list="list"/>
+        <!-- <breadcrumb :list="list"/> -->
         <div class="container-fluid">
           <nuxt />
         </div>
@@ -31,9 +33,14 @@ export default {
     return {
       nav: [
         {
-          name: 'Dashboard',
-          to: { name: 'index' },
-          icon: 'fa fa-dashboard'
+          name: 'Hash',
+          to: { name: 'hash' },
+          icon: 'fa fa-key'
+        },
+        {
+          name: 'RSA KeyGen',
+          to: { name: 'public-key-infrastructure-rsa-keygen' },
+          icon: 'fa fa-shield'
         }
       ]
     }
