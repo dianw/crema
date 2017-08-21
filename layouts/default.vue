@@ -1,12 +1,12 @@
 <template>
-  <div class="app">
-    <AppHeader/>
+  <div class="app header-fixed sidebar-fixed">
+    <AppHeader />
     <div class="app-body">
       <no-ssr>
         <Sidebar :navItems="nav"/>
       </no-ssr>
       <main class="main">
-        <breadcrumb :list="list"/>
+        <!-- <breadcrumb :list="list"/> -->
         <div class="container-fluid">
           <nuxt />
         </div>
@@ -41,6 +41,11 @@ export default {
           name: 'Hash',
           to: { name: 'hash' },
           icon: 'fa fa-key'
+        },
+        {
+          name: 'RSA KeyGen',
+          to: { name: 'public-key-infrastructure-rsa-keygen' },
+          icon: 'fa fa-shield'
         }
       ]
     }
