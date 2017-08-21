@@ -11,7 +11,10 @@ module.exports = {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+    ],
+    bodyAttrs: {
+      class: 'header-fixed footer-fixed sidebar-fixed'
+    }
   },
 
   css: [
@@ -34,6 +37,9 @@ module.exports = {
   router: {
     mode: 'hash'
   },
+
+  type: 'spa',
+
   /*
   ** Build configuration
   */

@@ -1,5 +1,5 @@
 <template>
-  <div class="app header-fixed sidebar-fixed">
+  <div class="app">
     <AppHeader />
     <div class="app-body">
       <no-ssr>
@@ -32,11 +32,6 @@ export default {
   data () {
     return {
       nav: [
-        {
-          name: 'Dashboard',
-          to: { name: 'index' },
-          icon: 'fa fa-dashboard'
-        },
         {
           name: 'Hash',
           to: { name: 'hash' },

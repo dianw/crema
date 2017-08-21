@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="to" class="nav-link">
+  <router-link :to="to" class="nav-link" active-class="active">
     <i :class="icon"></i> {{name}}
     <b-badge :variant="badge.variant">{{badge.text}}</b-badge>
   </router-link>

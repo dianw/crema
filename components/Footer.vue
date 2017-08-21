@@ -1,6 +1,6 @@
 <template>
   <footer class="app-footer">
-    <span class="float-right">
+    <span class="float-left">
       &copy; {{ new Date().getFullYear() }} - <a href="https://github.com/dianw" target="_blank">Dian Aditya</a>
     </span>
   </footer>
