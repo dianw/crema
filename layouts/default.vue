@@ -39,29 +39,8 @@ export default {
         },
         {
           name: 'Hash',
-          icon: 'fa fa-key',
-          children: [
-            {
-              name: 'SHA-512',
-              to: { name: 'hash-alg', params: { alg: 'sha512' } },
-              icon: 'fa fa-chevron-right'
-            },
-            {
-              name: 'SHA-256',
-              to: { name: 'hash-alg', params: { alg: 'sha256' } },
-              icon: 'fa fa-chevron-right'
-            },
-            {
-              name: 'SHA-1',
-              to: { name: 'hash-alg', params: { alg: 'sha1' } },
-              icon: 'fa fa-chevron-right'
-            },
-            {
-              name: 'MD5',
-              to: { name: 'hash-alg', params: { alg: 'md5' } },
-              icon: 'fa fa-chevron-right'
-            }
-          ]
+          to: { name: 'hash' },
+          icon: 'fa fa-key'
         }
       ]
     }

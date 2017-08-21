@@ -30,6 +30,10 @@ module.exports = {
     '~/plugins/bootstrap-vue',
     '~/plugins/vue-no-ssr'
   ],
+
+  router: {
+    mode: 'hash'
+  },
   /*
   ** Build configuration
   */
