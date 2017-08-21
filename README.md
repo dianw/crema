@@ -1,27 +1,20 @@
 # crema
-Graphical Crypto Toolkit
 
-## Development
-To start:
+> Graphical Crypto Toolkit
 
-```bash
-$ npm install
-```
+## Build Setup
 
-To develop:
+``` bash
+# install dependencies
+$ npm install # Or yarn install
 
-```bash
+# serve with hot reload at localhost:3000
 $ npm run dev
-```
 
-To build for production:
-
-```bash
+# build for production and launch server
 $ npm run build
-```
+$ npm start
 
-To lint you code:
-
-```bash
-$ npm run lint
+# generate static project
+$ npm run generate
 ```
