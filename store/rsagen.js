@@ -2,6 +2,7 @@ import forge from 'node-forge'
 
 export const state = () => ({
   keySize: 2048,
+  keyPair: null,
   privateKeyPem: null,
   publicKeyPem: null,
   publicKeySSH: null
@@ -12,6 +13,7 @@ export const mutations = {
     state.keySize = keySize
   },
   setKeyPair (state, keyPair) {
+    state.keyPair = keyPair
     state.privateKeyPem = keyPair.privateKeyPem
     state.publicKeyPem = keyPair.publicKeyPem
     state.publicKeySSH = keyPair.publicKeySSH

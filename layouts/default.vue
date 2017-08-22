@@ -41,6 +41,11 @@ export default {
           name: 'RSA KeyGen',
           to: { name: 'public-key-infrastructure-rsa-keygen' },
           icon: 'fa fa-shield'
+        },
+        {
+          name: 'Cert Signing Request',
+          to: { name: 'public-key-infrastructure-cert-signing-req' },
+          icon: 'fa fa-id-card'
         }
       ]
     }
