@@ -35,7 +35,7 @@ export default {
         {
           name: 'Hash',
           to: { name: 'hash' },
-          icon: 'fa fa-key'
+          icon: 'fa fa-calculator'
         },
         {
           name: 'RSA KeyGen',
