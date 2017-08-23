@@ -3,7 +3,7 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: 'crema',
+    title: 'Crema - Graphical Crypto Toolkit',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -44,6 +44,12 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    vendor: [
+      'node-forge',
+      'bootstrap-vue',
+      'vue-no-ssr',
+      '@nuxtjs/font-awesome'
+    ],
     /*
     ** Run ESLINT on save
     */
