@@ -7,7 +7,18 @@
       <b-form-input :value="publicKeyPem" placeholder="Public Key Output" :rows="rowSize" textarea readonly></b-form-input>
     </b-tab>
     <b-tab title="SSH Public Key">
+      <b-form-input :value="publicKeyFingerprint" placeholder="Public Key Fingerprint" class="mb-1" readonly></b-form-input>
       <b-form-input :value="publicKeySSH" placeholder="SSH Public Key Output" :rows="rowSize" textarea readonly></b-form-input>
+    </b-tab>
+    <b-tab title="Save">
+      <b-form @submit.prevent="save">
+        <b-form-fieldset>
+          <b-form-input placeholder="Key-Pair Name..." v-model="name" ref="name"></b-form-input>
+        </b-form-fieldset>
+        <b-form-fieldset>
+          <b-button type="submit" variant="primary" class="col-4">Save</b-button>
+        </b-form-fieldset>
+      </b-form>
     </b-tab>
   </b-tabs>
 </template>
@@ -30,6 +41,22 @@ export default {
     publicKeySSH: {
       type: String,
       default: ''
+    },
+    publicKeyFingerprint: {
+      type: String,
+      default: ''
+    }
+  },
+  data: () => ({
+    name: null
+  }),
+  methods: {
+    save () {
+      if ((this.name || '').trim() === '') {
+        this.$refs.name.focus()
+        return
+      }
+      this.$emit('save', this.name, this.privateKeyPem, this.publicKeyPem)
     }
   }
 }

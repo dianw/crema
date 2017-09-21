@@ -6,7 +6,8 @@ export const state = () => ({
   keyPair: null,
   privateKeyPem: null,
   publicKeyPem: null,
-  publicKeySSH: null
+  publicKeySSH: null,
+  publicKeyFingerprint: null
 })
 
 export const mutations = {
@@ -18,6 +19,7 @@ export const mutations = {
     state.privateKeyPem = keyPair.privateKeyPem
     state.publicKeyPem = keyPair.publicKeyPem
     state.publicKeySSH = keyPair.publicKeySSH
+    state.publicKeyFingerprint = keyPair.publicKeyFingerprint
   }
 }
 
@@ -36,7 +38,8 @@ export const actions = {
       keyPair: keyPair,
       privateKeyPem: forge.pki.privateKeyToPem(keyPair.privateKey),
       publicKeyPem: forge.pki.publicKeyToPem(keyPair.publicKey),
-      publicKeySSH: forge.ssh.publicKeyToOpenSSH(keyPair.publicKey)
+      publicKeySSH: forge.ssh.publicKeyToOpenSSH(keyPair.publicKey),
+      publicKeyFingerprint: forge.ssh.getPublicKeyFingerprint(keyPair.publicKey, {encoding: 'hex', delimiter: ':'})
     })).then(keyPair => {
       commit('setKeyPair', keyPair)
       return keyPair
