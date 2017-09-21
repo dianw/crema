@@ -28,12 +28,13 @@ export const actions = {
     if (state.currentUser) {
       return state.currentUser
     }
-    return firebase.auth().onAuthStateChanged(currentUser => {
-      if (currentUser) {
-        commit('setCurrentUser', currentUser)
-        return currentUser
-      }
-      return null
+    return new Promise((resolve, reject) => {
+      firebase.auth().onAuthStateChanged(currentUser => {
+        if (currentUser) {
+          commit('setCurrentUser', currentUser)
+        }
+        resolve(currentUser)
+      })
     })
   }
 }
