@@ -1,9 +1,9 @@
 <template>
   <div class="app">
-    <AppHeader />
+    <AppHeader :current-user="currentUser" />
     <div class="app-body">
       <no-ssr>
-        <Sidebar :navItems="nav"/>
+        <Sidebar :nav-items="nav" />
       </no-ssr>
       <main class="main">
         <!-- <breadcrumb :list="list"/> -->
@@ -19,6 +19,7 @@
 
 <script>
 import { Header as AppHeader, Sidebar, Aside as AppAside, Footer as AppFooter, Breadcrumb } from '~/components/'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'full',
@@ -56,7 +57,19 @@ export default {
     },
     list () {
       return this.$route.matched
-    }
+    },
+    ...mapState({
+      currentUser: state => state.auth.currentUser
+    })
+  },
+  methods: {
+    ...mapActions({
+      login: 'auth/login',
+      checkLoggedIn: 'auth/isLoggedIn'
+    })
+  },
+  mounted () {
+    this.checkLoggedIn()
   }
 }
 </script>

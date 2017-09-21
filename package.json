@@ -16,9 +16,11 @@
     "@nuxtjs/font-awesome": "^1.0.2",
     "bootstrap": "4.0.0-beta",
     "bootstrap-vue": "^0.22.1",
+    "firebase": "^4.3.1",
     "node-forge": "^0.7.1",
     "nuxt": "^1.0.0-rc3",
-    "vue-no-ssr": "^0.1.2"
+    "vue-no-ssr": "^0.1.2",
+    "vuefire": "^1.4.3"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
