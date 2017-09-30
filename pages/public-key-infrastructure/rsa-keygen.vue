@@ -18,7 +18,7 @@
               <em>Work-in-progress</em>
             </b-alert>
             <b-list-group flush>
-              <b-list-group-item v-for="(i, index) in new Array(5)">
+              <b-list-group-item v-for="(i, index) in new Array(5)" :key="i">
                 <b-button variant="danger" size="sm" class="pull-right">
                   <i class="fa fa-trash"></i>
                 </b-button>
