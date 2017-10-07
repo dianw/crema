@@ -38,7 +38,7 @@ export const actions = {
     }
     return this.$db.collection('keyPairs')
       .where('uid', '==', currentUser.uid)
-      // .orderBy('createdDate', 'desc')
+      .orderBy('createdDate', 'desc')
       .get()
       .then(docs => {
         commit('setKeyPairs', [])
