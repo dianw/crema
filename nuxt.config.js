@@ -31,7 +31,7 @@ module.exports = {
 
   plugins: [
     '~/plugins/bootstrap-vue',
-    '~/plugins/vuefire'
+    '~/plugins/firebase'
   ],
 
   router: {
@@ -48,7 +48,6 @@ module.exports = {
       'node-forge',
       'bootstrap-vue',
       'firebase',
-      'vuefire',
       '@nuxtjs/font-awesome'
     ],
     /*

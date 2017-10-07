@@ -1,5 +1,3 @@
-import firebase from 'firebase'
-
 export const state = () => ({
   currentUser: null
 })
@@ -17,8 +15,8 @@ export const actions = {
       if (user) {
         return user
       }
-      const provider = new firebase.auth[authProvider + 'AuthProvider']()
-      return firebase.auth().signInWithPopup(provider).then(result => {
+      const provider = new this.$firebase.auth[authProvider + 'AuthProvider']()
+      return this.$firebase.auth().signInWithPopup(provider).then(result => {
         commit('setCurrentUser', result.user)
         return result.user
       })
@@ -29,7 +27,7 @@ export const actions = {
       return state.currentUser
     }
     return new Promise((resolve, reject) => {
-      firebase.auth().onAuthStateChanged(currentUser => {
+      this.$firebase.auth().onAuthStateChanged(currentUser => {
         if (currentUser) {
           commit('setCurrentUser', currentUser)
         }

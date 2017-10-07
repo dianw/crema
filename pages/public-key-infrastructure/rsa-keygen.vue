@@ -18,12 +18,11 @@
               <em>Work-in-progress</em>
             </b-alert>
             <b-list-group flush>
-              <b-list-group-item v-for="(i, index) in new Array(5)" :key="i">
+              <b-list-group-item v-for="kp in keyPairs" :key="kp.id">
                 <b-button variant="danger" size="sm" class="pull-right">
                   <i class="fa fa-trash"></i>
                 </b-button>
-                <h6>My Key {{ index + 1 }}</h6>
-                <p class="text-muted">ff:7a:d0:3d:cf:78:3e:9c:49:09:c4:83:ae:aa:46:8{{ index }}</p>
+                <h6 v-text="kp.data.name"></h6>
               </b-list-group-item>
             </b-list-group>
           </b-card>
@@ -34,7 +33,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import KeyPairTab from '~/components/KeyPairTab'
 
 export default {
@@ -48,6 +47,7 @@ export default {
     ...mapState({
       keySize: state => state.rsagen.keySize,
       keySizes: state => state.rsagen.keySizes,
+      keyPairs: state => state.rsagen.keyPairs,
       privateKeyPem: state => state.rsagen.privateKeyPem,
       publicKeyPem: state => state.rsagen.publicKeyPem,
       publicKeySSH: state => state.rsagen.publicKeySSH,
@@ -57,13 +57,24 @@ export default {
   methods: {
     generate () {
       this.generating = true
-      this.$store.dispatch('rsagen/generate', this.keySize).then(() => {
+      this.rsagenGenerate(this.keySize).then(() => {
         this.generating = false
       })
     },
-    saveKeyPair (name) {
-      console.log(name)
-    }
+    saveKeyPair (name, key) {
+      this.rsagenSave({ name, key })
+    },
+    ...mapActions({
+      isLoggedIn: 'auth/isLoggedIn',
+      rsagenFetch: 'rsagen/fetch',
+      rsagenGenerate: 'rsagen/generate',
+      rsagenSave: 'rsagen/save'
+    })
+  },
+  mounted () {
+    this.isLoggedIn().then(() => {
+      this.rsagenFetch()
+    })
   }
 }
 </script>

@@ -10,7 +10,7 @@
       <b-form-input :value="publicKeyFingerprint" placeholder="Public Key Fingerprint" class="mb-1" readonly></b-form-input>
       <b-form-input :value="publicKeySSH" placeholder="SSH Public Key Output" :rows="rowSize" textarea readonly></b-form-input>
     </b-tab>
-    <b-tab title="Save">
+    <b-tab title="Save" v-if="privateKeyPem && !saved">
       <b-form @submit.prevent="save">
         <b-form-fieldset>
           <b-form-input placeholder="Key-Pair Name..." v-model="name" ref="name"></b-form-input>
@@ -48,7 +48,8 @@ export default {
     }
   },
   data: () => ({
-    name: null
+    name: null,
+    saved: false
   }),
   methods: {
     save () {
@@ -57,6 +58,12 @@ export default {
         return
       }
       this.$emit('save', this.name, this.privateKeyPem, this.publicKeyPem)
+      this.saved = true
+    }
+  },
+  watch: {
+    privateKeyPem () {
+      this.saved = false
     }
   }
 }

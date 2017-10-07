@@ -1,8 +1,5 @@
-import Vue from 'vue'
-import VueFire from 'vuefire'
 import firebase from 'firebase'
-
-Vue.use(VueFire)
+import 'firebase/firestore'
 
 const config = {
   apiKey: 'AIzaSyBcFESXRfDqbzueVN-IIMOeKBlahr-nkpg',
@@ -15,4 +12,9 @@ const config = {
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp(config)
+}
+
+export default (context, inject) => {
+  inject('firebase', firebase)
+  inject('db', firebase.firestore())
 }
