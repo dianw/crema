@@ -31,7 +31,6 @@ module.exports = {
 
   plugins: [
     '~/plugins/bootstrap-vue',
-    '~/plugins/vue-no-ssr',
     '~/plugins/vuefire'
   ],
 
@@ -49,7 +48,6 @@ module.exports = {
       'node-forge',
       'bootstrap-vue',
       'firebase',
-      'vue-no-ssr',
       'vuefire',
       '@nuxtjs/font-awesome'
     ],

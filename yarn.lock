@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@firebase/webchannel-wrapper@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@firebase/webchannel-wrapper/-/webchannel-wrapper-0.2.1.tgz#2c4dbc15edd1de4f656d543a6f512ded7978ef72"
+
 "@nuxtjs/font-awesome@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@nuxtjs/font-awesome/-/font-awesome-1.0.2.tgz#cf1740e04b36e94476ed5cba69aef14a773625a2"
@@ -2288,9 +2292,10 @@ find-up@^2.0.0, find-up@^2.1.0:
     locate-path "^2.0.0"
 
 firebase@^4.3.1:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/firebase/-/firebase-4.4.0.tgz#cffa34964c38ae24157ec930dbe147816fd8e3f4"
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/firebase/-/firebase-4.5.0.tgz#e0973a9803b74c4c9d73d19f874712e6e9d16ba7"
   dependencies:
+    "@firebase/webchannel-wrapper" "^0.2.1"
     dom-storage "^2.0.2"
     faye-websocket "0.9.3"
     jsonwebtoken "^7.3.0"
@@ -5615,10 +5620,6 @@ vue-meta@^1.1.0:
     deepmerge "^1.5.0"
     lodash.isplainobject "^4.0.6"
     object-assign "^4.1.1"
-
-vue-no-ssr@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/vue-no-ssr/-/vue-no-ssr-0.1.2.tgz#464bc6d4347662b1d175feca45869d77f7a307d9"
 
 vue-router@^2.7.0:
   version "2.7.0"
