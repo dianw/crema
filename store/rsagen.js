@@ -76,7 +76,7 @@ export const actions = {
     }
     const keyPairsRef = this.$db.collection('keyPairs').doc()
     return keyPairsRef.set({
-      createdDate: new Date().getTime(),
+      createdDate: this.$serverTimestamp(),
       key,
       name,
       uid: currentUser.uid

@@ -17,4 +17,5 @@ if (firebase.apps.length === 0) {
 export default (context, inject) => {
   inject('firebase', firebase)
   inject('db', firebase.firestore())
+  inject('serverTimestamp', () => firebase.firestore.FieldValue.serverTimestamp())
 }
