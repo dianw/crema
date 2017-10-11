@@ -31,6 +31,11 @@ export const mutations = {
 }
 
 export const actions = {
+  delete ({ dispatch }, docId) {
+    return this.$db.collection('keyPairs').doc(docId).delete().then(() => {
+      return dispatch('fetch')
+    })
+  },
   fetch ({ rootState, commit }) {
     const currentUser = rootState.auth.currentUser
     if (!currentUser) {

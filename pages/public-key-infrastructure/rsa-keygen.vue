@@ -19,7 +19,7 @@
             </b-alert>
             <b-list-group flush>
               <b-list-group-item v-for="kp in keyPairs" :key="kp.id">
-                <b-button variant="danger" size="sm" class="pull-right">
+                <b-button variant="danger" size="sm" class="pull-right" @click="rsagenDelete(kp.id)">
                   <i class="fa fa-trash"></i>
                 </b-button>
                 <h6 v-text="kp.data.name"></h6>
@@ -66,6 +66,7 @@ export default {
     },
     ...mapActions({
       isLoggedIn: 'auth/isLoggedIn',
+      rsagenDelete: 'rsagen/delete',
       rsagenFetch: 'rsagen/fetch',
       rsagenGenerate: 'rsagen/generate',
       rsagenSave: 'rsagen/save'
