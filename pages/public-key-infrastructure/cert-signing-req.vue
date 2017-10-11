@@ -35,7 +35,7 @@
             <b-form-input placeholder="CSR PEM Output" :rows="15" readonly textarea :value="csrPem"></b-form-input>
           </b-form-fieldset>
           <b-form-fieldset>
-            <key-pair-tab :privateKeyPem="privateKeyPem" :publicKeyPem="publicKeyPem" :publicKeySSH="publicKeySSH"></key-pair-tab>
+            <key-pair-tab :key-pair="keyPair"></key-pair-tab>
           </b-form-fieldset>
         </div>
       </div>
@@ -70,9 +70,7 @@ export default {
       keySize: state => state.rsagen.keySize,
       keySizes: state => state.rsagen.keySizes,
       countries: state => state.country.countries,
-      privateKeyPem: state => state.rsagen.privateKeyPem,
-      publicKeyPem: state => state.rsagen.publicKeyPem,
-      publicKeySSH: state => state.rsagen.publicKeySSH
+      keyPair: state => state.rsagen.keyPair
     })
   },
   methods: {

@@ -4,11 +4,7 @@ export const state = () => ({
   keySize: 2048,
   keySizes: [ 512, 1024, 2048, 4096 ],
   keyPair: null,
-  keyPairs: [],
-  privateKeyPem: null,
-  publicKeyPem: null,
-  publicKeySSH: null,
-  publicKeyFingerprint: null
+  keyPairs: []
 })
 
 export const mutations = {
@@ -19,11 +15,7 @@ export const mutations = {
     state.keySize = keySize
   },
   setKeyPair (state, keyPair) {
-    state.keyPair = keyPair.keyPair
-    state.privateKeyPem = keyPair.privateKeyPem
-    state.publicKeyPem = keyPair.publicKeyPem
-    state.publicKeySSH = keyPair.publicKeySSH
-    state.publicKeyFingerprint = keyPair.publicKeyFingerprint
+    state.keyPair = keyPair
   },
   setKeyPairs (state, keyPairs) {
     state.keyPairs = keyPairs
@@ -63,13 +55,7 @@ export const actions = {
           resolve(keyPair)
         }
       })
-    }).then(keyPair => ({
-      keyPair: keyPair,
-      privateKeyPem: forge.pki.privateKeyToPem(keyPair.privateKey),
-      publicKeyPem: forge.pki.publicKeyToPem(keyPair.publicKey),
-      publicKeySSH: forge.ssh.publicKeyToOpenSSH(keyPair.publicKey),
-      publicKeyFingerprint: forge.ssh.getPublicKeyFingerprint(keyPair.publicKey, {encoding: 'hex', delimiter: ':'})
-    })).then(keyPair => {
+    }).then(keyPair => {
       commit('setKeyPair', keyPair)
       return keyPair
     })

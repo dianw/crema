@@ -24,32 +24,26 @@
 </template>
 
 <script>
+import forge from 'node-forge'
+
 export default {
   props: {
     rowSize: {
       type: Number,
       default: 15
     },
-    privateKeyPem: {
-      type: String,
-      default: ''
-    },
-    publicKeyPem: {
-      type: String,
-      default: ''
-    },
-    publicKeySSH: {
-      type: String,
-      default: ''
-    },
-    publicKeyFingerprint: {
-      type: String,
-      default: ''
+    keyPair: {
+      type: Object,
+      default: () => ({})
     }
   },
   data: () => ({
     name: null,
-    saved: false
+    saved: false,
+    privateKeyPem: null,
+    publicKeyPem: null,
+    publicKeySSH: null,
+    publicKeyFingerprint: null
   }),
   methods: {
     save () {
@@ -59,11 +53,22 @@ export default {
       }
       this.$emit('save', this.name, this.privateKeyPem, this.publicKeyPem)
       this.saved = true
+    },
+    loadKeyPair (kp) {
+      if (!kp.privateKey) return
+      this.privateKeyPem = forge.pki.privateKeyToPem(kp.privateKey)
+      this.publicKeyPem = forge.pki.publicKeyToPem(kp.publicKey)
+      this.publicKeySSH = forge.ssh.publicKeyToOpenSSH(kp.publicKey)
+      this.publicKeyFingerprint = forge.ssh.getPublicKeyFingerprint(kp.publicKey, {encoding: 'hex', delimiter: ':'})
     }
   },
+  mounted () {
+    this.loadKeyPair(this.keyPair)
+  },
   watch: {
-    privateKeyPem () {
+    keyPair (kp) {
       this.saved = false
+      this.loadKeyPair(kp)
     }
   }
 }

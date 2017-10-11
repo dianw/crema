@@ -10,7 +10,7 @@
             <b-btn variant="primary" :disabled="generating" size="lg" @click="generate">Generate Key Pair</b-btn>
           </b-form-fieldset>
           <br />
-          <key-pair-tab :privateKeyPem="privateKeyPem" :publicKeyPem="publicKeyPem" :publicKeySSH="publicKeySSH" :publicKeyFingerprint="publicKeyFingerprint" @save="saveKeyPair"></key-pair-tab>
+          <key-pair-tab :key-pair="keyPair" @save="saveKeyPair"></key-pair-tab>
         </div>
         <div class="col-md-6">
           <b-card header="Saved Key-Pairs" header-tag="strong" no-block class="mb-0">
@@ -47,11 +47,8 @@ export default {
     ...mapState({
       keySize: state => state.rsagen.keySize,
       keySizes: state => state.rsagen.keySizes,
-      keyPairs: state => state.rsagen.keyPairs,
-      privateKeyPem: state => state.rsagen.privateKeyPem,
-      publicKeyPem: state => state.rsagen.publicKeyPem,
-      publicKeySSH: state => state.rsagen.publicKeySSH,
-      publicKeyFingerprint: state => state.rsagen.publicKeyFingerprint
+      keyPair: state => state.rsagen.keyPair,
+      keyPairs: state => state.rsagen.keyPairs
     })
   },
   methods: {
