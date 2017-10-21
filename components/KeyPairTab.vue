@@ -55,7 +55,7 @@ export default {
       this.saved = true
     },
     loadKeyPair (kp) {
-      if (!kp.privateKey) return
+      if (!kp || !kp.privateKey) return
       this.privateKeyPem = forge.pki.privateKeyToPem(kp.privateKey)
       this.publicKeyPem = forge.pki.publicKeyToPem(kp.publicKey)
       this.publicKeySSH = forge.ssh.publicKeyToOpenSSH(kp.publicKey)

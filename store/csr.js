@@ -28,7 +28,7 @@ export const actions = {
   generate ({ commit, dispatch, state }, { keySize, dn }) {
     return dispatch('rsagen/generate', keySize, { root: true }).then(keyPair => {
       return dispatch('setSubject', dn).then(subject => {
-        return { subject, keyPair: keyPair.keyPair }
+        return { subject, keyPair }
       })
     }).then(({ subject, keyPair }) => {
       const csr = forge.pki.createCertificationRequest()
