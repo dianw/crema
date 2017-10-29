@@ -6,6 +6,12 @@
 
 https://crema.tlsfree.org
 
+## Docker Container
+```
+docker run -p 3000:80 dianw/crema
+```
+And then open http://localhost:3000/ in your browser
+
 ## Build Setup
 
 ``` bash
