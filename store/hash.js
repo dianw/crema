@@ -1,4 +1,4 @@
-import forge from 'node-forge'
+import { md } from 'node-forge'
 
 export const state = () => ({
   alg: 'sha256',
@@ -16,28 +16,28 @@ export const mutations = {
     state.input = input
     state.isInputText = isText
   },
-  setOutput (state, md) {
-    state.outputMd = md
-    state.outputHex = state.input === '' ? '' : md.toHex()
+  setOutput (state, message) {
+    state.outputMd = message
+    state.outputHex = state.input === '' ? '' : message.toHex()
   }
 }
 
 export const actions = {
   calculate ({ commit, state }, { alg, input, isText }) {
-    const md = forge.md[alg].create()
+    const message = md[alg].create()
     if (isText) {
-      md.update(input)
+      message.update(input)
       commit('setInput', { isText: true, input })
-      commit('setOutput', md.digest())
+      commit('setOutput', message.digest())
     } else {
       const reader = new FileReader()
       reader.onload = () => {
         const binary = new Uint8Array(reader.result)
         for (let i = 0; i < binary.length; i++) {
-          md.update(String.fromCharCode(binary[i]))
+          message.update(String.fromCharCode(binary[i]))
         }
         commit('setInput', { isText: false, input })
-        commit('setOutput', md.digest())
+        commit('setOutput', message.digest())
       }
       reader.readAsArrayBuffer(input)
     }

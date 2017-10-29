@@ -1,4 +1,4 @@
-import forge from 'node-forge'
+import { pki } from 'node-forge'
 
 export const state = () => ({
   dn: null,
@@ -31,13 +31,13 @@ export const actions = {
         return { subject, keyPair }
       })
     }).then(({ subject, keyPair }) => {
-      const csr = forge.pki.createCertificationRequest()
+      const csr = pki.createCertificationRequest()
       csr.publicKey = keyPair.publicKey
       csr.setSubject(subject)
       csr.sign(keyPair.privateKey)
       const signedCsr = {
         csr,
-        pem: forge.pki.certificationRequestToPem(csr)
+        pem: pki.certificationRequestToPem(csr)
       }
       commit('setCSR', signedCsr)
       return signedCsr

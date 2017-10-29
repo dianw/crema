@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import forge from 'node-forge'
+import { pki, ssh } from 'node-forge'
 
 export default {
   props: {
@@ -56,10 +56,10 @@ export default {
     },
     loadKeyPair (kp) {
       if (!kp || !kp.privateKey) return
-      this.privateKeyPem = forge.pki.privateKeyToPem(kp.privateKey)
-      this.publicKeyPem = forge.pki.publicKeyToPem(kp.publicKey)
-      this.publicKeySSH = forge.ssh.publicKeyToOpenSSH(kp.publicKey)
-      this.publicKeyFingerprint = forge.ssh.getPublicKeyFingerprint(kp.publicKey, {encoding: 'hex', delimiter: ':'})
+      this.privateKeyPem = pki.privateKeyToPem(kp.privateKey)
+      this.publicKeyPem = pki.publicKeyToPem(kp.publicKey)
+      this.publicKeySSH = ssh.publicKeyToOpenSSH(kp.publicKey)
+      this.publicKeyFingerprint = ssh.getPublicKeyFingerprint(kp.publicKey, {encoding: 'hex', delimiter: ':'})
     }
   },
   mounted () {

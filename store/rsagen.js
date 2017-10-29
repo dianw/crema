@@ -1,4 +1,4 @@
-import forge from 'node-forge'
+import { pki } from 'node-forge'
 
 export const state = () => ({
   keySize: 2048,
@@ -48,7 +48,7 @@ export const actions = {
   generate ({ commit }, keySize) {
     commit('setKeyPair', {})
     return new Promise((resolve, reject) => {
-      forge.pki.rsa.generateKeyPair({ bits: keySize, workers: 4 }, (err, keyPair) => {
+      pki.rsa.generateKeyPair({ bits: keySize, workers: 4 }, (err, keyPair) => {
         if (err) {
           reject(err)
         } else {
