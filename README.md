@@ -1,6 +1,10 @@
+[![Build Status](https://travis-ci.org/dianw/crema.svg?branch=master)](https://travis-ci.org/dianw/crema)
+
 # crema
 
 > Graphical Crypto Toolkit
+
+https://crema.tlsfree.org
 
 ## Build Setup
 
