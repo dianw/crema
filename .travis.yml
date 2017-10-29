@@ -1,10 +1,24 @@
 language: node_js
+
 node_js:
-- '8'
+  - '8'
+
+services:
+  - docker
+
 before_script:
-- yarn
+  - yarn
+
 script:
-- yarn run generate
+  - yarn run generate
+  - docker build . --tag dianw/crema:latest
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    docker push dianw/crema;
+    fi
+
 deploy:
   provider: pages
   skip_cleanup: true
