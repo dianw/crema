@@ -12,6 +12,7 @@ before_script:
 script:
   - yarn run generate
   - docker build . --tag dianw/crema:latest
+  - PUBLIC_PATH=https://dianw.github.io/crema/ yarn run generate
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
