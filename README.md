@@ -6,6 +6,8 @@
 
 https://dianw.github.io/crema
 
+![crema](https://user-images.githubusercontent.com/363775/32182106-81f8c62c-bdc8-11e7-8a65-3c4630c8b699.png)
+
 ## Docker Container
 ```
 docker run -p 3000:80 dianw/crema
