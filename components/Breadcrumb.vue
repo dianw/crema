@@ -26,7 +26,7 @@ export default {
       if (item.name) {
         item = item.name
       }
-      return item
+      return ''
     }
   }
 }

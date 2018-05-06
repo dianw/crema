@@ -13,7 +13,12 @@
     <b-tab title="Save" v-if="privateKeyPem && !saved">
       <b-form @submit.prevent="save">
         <b-form-fieldset>
-          <b-form-input placeholder="Key-Pair Name..." v-model="name" ref="name"></b-form-input>
+          <label for="name">Key-Pair Name</label>
+          <b-form-input id="name" placeholder="Key-Pair Name" v-model="name" ref="name" required></b-form-input>
+        </b-form-fieldset>
+        <b-form-fieldset>
+          <label for="password">Password</label>
+          <b-form-input id="password" type="password" placeholder="Password" v-model="password" ref="password" required></b-form-input>
         </b-form-fieldset>
         <b-form-fieldset>
           <b-button type="submit" variant="primary" class="col-4">Save</b-button>
@@ -40,6 +45,7 @@ export default {
   data: () => ({
     name: null,
     saved: false,
+    password: null,
     privateKeyPem: null,
     publicKeyPem: null,
     publicKeySSH: null,
@@ -51,7 +57,7 @@ export default {
         this.$refs.name.focus()
         return
       }
-      this.$emit('save', this.name, this.privateKeyPem, this.publicKeyPem)
+      this.$emit('save', this.name, this.password, this.privateKeyPem, this.publicKeyPem)
       this.saved = true
     },
     loadKeyPair (kp) {
