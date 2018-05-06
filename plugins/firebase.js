@@ -6,7 +6,7 @@ const config = {
   authDomain: 'tlsfree-crema.firebaseapp.com',
   databaseURL: 'https://tlsfree-crema.firebaseio.com',
   projectId: 'tlsfree-crema',
-  storageBucket: '',
+  storageBucket: 'gs://tlsfree-crema.appspot.com',
   messagingSenderId: '557427128749'
 }
 
@@ -17,5 +17,6 @@ if (firebase.apps.length === 0) {
 export default (context, inject) => {
   inject('firebase', firebase)
   inject('db', firebase.firestore())
+  inject('storage', firebase.storage())
   inject('serverTimestamp', () => firebase.firestore.FieldValue.serverTimestamp())
 }

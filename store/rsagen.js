@@ -60,20 +60,28 @@ export const actions = {
       return keyPair
     })
   },
-  save ({ rootState, dispatch }, { name, key }) {
+  save ({ rootState, dispatch }, { name, password, key }) {
     const currentUser = rootState.auth.currentUser
     if (!currentUser) {
       return null
     }
+
+    const privateKey = pki.privateKeyFromPem(key)
+    const pem = pki.encryptRsaPrivateKey(privateKey, password)
+
     const keyPairsRef = this.$db.collection('keyPairs').doc()
-    return keyPairsRef.set({
-      createdDate: this.$serverTimestamp(),
-      key,
-      name,
-      uid: currentUser.uid
-    }).then(data => {
-      dispatch('fetch')
-      return data
-    })
+    const keyPairsStorageRef = this.$storage.ref().child(`key-pairs/${currentUser.uid}/${keyPairsRef.id}-${name}.pem`)
+    return keyPairsStorageRef.putString(pem)
+      .then(() => keyPairsStorageRef.getDownloadURL())
+      .then(downloadUrl => keyPairsRef.set({
+        createdDate: this.$serverTimestamp(),
+        storagePath: keyPairsStorageRef.fullPath,
+        storageDownloadUrl: downloadUrl,
+        name,
+        uid: currentUser.uid
+      })).then(() => {
+        dispatch('fetch')
+        return keyPairsRef
+      })
   }
 }

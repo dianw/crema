@@ -38,7 +38,7 @@ module.exports = {
     mode: 'hash'
   },
 
-  type: 'spa',
+  mode: 'spa',
 
   /*
   ** Build configuration
