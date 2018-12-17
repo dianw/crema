@@ -1,25 +1,23 @@
 <template>
-  <no-ssr>
-    <div>
-      <h3>Hash Calculator</h3>
-      <b-card>
-        <b-form-fieldset label="Algorithm">
-          <b-form-select :options="algs" :value="alg" @input="e => { setHashAlg(e); calculateHash({ input, alg, isText: true }) }"></b-form-select>
-        </b-form-fieldset>
-        <b-tabs>
-          <b-tab title="Text Input">
-            <b-form-input :value="input" @input="input => calculateHash({ input, alg, isText: true })" placeholder="Insert text here" :rows="5" textarea></b-form-input>
-          </b-tab>
-          <b-tab title="File Input">
-            <b-form-file choose-label="Choose file" placeholder="Choose file" @input="input => calculateHash({ input, alg, isText: false })"></b-form-file>
-          </b-tab>
-        </b-tabs>
-        <b-form-fieldset label="Computed Hash">
-          <b-form-input :value="outputHex" placeholder="Hash Output" :rows="5" textarea readonly></b-form-input>
-        </b-form-fieldset>
-      </b-card>
-    </div>
-  </no-ssr>
+  <div>
+    <h3>Hash Calculator</h3>
+    <b-card>
+      <b-form-group label="Algorithm">
+        <b-form-select :options="algs" :value="alg" @input="e => { setHashAlg(e); calculateHash({ input, alg, isText: true }) }"></b-form-select>
+      </b-form-group>
+      <b-tabs class="my-2">
+        <b-tab title="Text Input">
+          <b-form-textarea :value="input" @input="input => calculateHash({ input, alg, isText: true })" placeholder="Insert text here" :rows="5" />
+        </b-tab>
+        <b-tab title="File Input">
+          <b-form-file choose-label="Choose file" placeholder="Choose file" @input="input => calculateHash({ input, alg, isText: false })"></b-form-file>
+        </b-tab>
+      </b-tabs>
+      <b-form-group label="Computed Hash">
+        <b-form-textarea :value="outputHex" placeholder="Hash Output" :rows="5" readonly />
+      </b-form-group>
+    </b-card>
+  </div>
 </template>
 
 <script>

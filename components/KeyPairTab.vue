@@ -1,28 +1,28 @@
 <template>
   <b-tabs class="monospace">
     <b-tab title="Private Key">
-      <b-form-input :value="privateKeyPem" placeholder="Private Key Output" :rows="rowSize" textarea readonly></b-form-input>
+      <b-form-textarea :value="privateKeyPem" placeholder="Private Key Output" :rows="rowSize" readonly />
     </b-tab>
     <b-tab title="Public Key">
-      <b-form-input :value="publicKeyPem" placeholder="Public Key Output" :rows="rowSize" textarea readonly></b-form-input>
+      <b-form-textarea :value="publicKeyPem" placeholder="Public Key Output" :rows="rowSize" readonly />
     </b-tab>
     <b-tab title="SSH Public Key">
-      <b-form-input :value="publicKeyFingerprint" placeholder="Public Key Fingerprint" class="mb-1" readonly></b-form-input>
-      <b-form-input :value="publicKeySSH" placeholder="SSH Public Key Output" :rows="rowSize" textarea readonly></b-form-input>
+      <b-form-input :value="publicKeyFingerprint" placeholder="Public Key Fingerprint" class="mb-1" readonly />
+      <b-form-textarea :value="publicKeySSH" placeholder="SSH Public Key Output" :rows="rowSize" readonly />
     </b-tab>
     <b-tab title="Save" v-if="privateKeyPem && !saved">
       <b-form @submit.prevent="save">
-        <b-form-fieldset>
+        <b-form-group>
           <label for="name">Key-Pair Name</label>
-          <b-form-input id="name" placeholder="Key-Pair Name" v-model="name" ref="name" required></b-form-input>
-        </b-form-fieldset>
-        <b-form-fieldset>
+          <b-form-input id="name" placeholder="Key-Pair Name" v-model="name" ref="name" required />
+        </b-form-group>
+        <b-form-group>
           <label for="password">Password</label>
-          <b-form-input id="password" type="password" placeholder="Password" v-model="password" ref="password" required></b-form-input>
-        </b-form-fieldset>
-        <b-form-fieldset>
+          <b-form-input id="password" type="password" placeholder="Password" v-model="password" ref="password" required />
+        </b-form-group>
+        <b-form-group>
           <b-button type="submit" variant="primary" class="col-4">Save</b-button>
-        </b-form-fieldset>
+        </b-form-group>
       </b-form>
     </b-tab>
   </b-tabs>
