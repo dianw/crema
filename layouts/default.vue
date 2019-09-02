@@ -2,9 +2,7 @@
   <div class="app">
     <AppHeader :current-user="currentUser" />
     <div class="app-body">
-      <no-ssr>
-        <Sidebar :nav-items="nav" />
-      </no-ssr>
+      <Sidebar :nav-items="nav" />
       <main class="main">
         <breadcrumb :list="list" />
         <div class="container-fluid">
