@@ -31,7 +31,8 @@ module.exports = {
 
   plugins: [
     '~/plugins/bootstrap-vue',
-    '~/plugins/firebase'
+    '~/plugins/firebase',
+    '~/plugins/route'
   ],
 
   router: {
