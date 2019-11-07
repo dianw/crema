@@ -4,8 +4,7 @@
     <div class="app-body">
       <Sidebar :nav-items="nav" />
       <main class="main">
-        <breadcrumb :list="list" />
-        <div class="container-fluid">
+        <div class="container-fluid my-3">
           <nuxt />
         </div>
       </main>

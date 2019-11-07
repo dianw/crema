@@ -6,7 +6,7 @@
         <h2>crema</h2>
       </b-navbar-brand>
       <b-button class="navbar-toggler sidebar-toggler d-md-down-none mr-auto" @click="sidebarMinimize">&#9776;</b-button>
-      <b-nav is-nav-bar>
+      <b-navbar-nav class="ml-auto">
         <b-nav-item :to="{ name: 'login' }" v-if="!currentUser || !currentUser.displayName">
           Login
         </b-nav-item>
@@ -16,7 +16,7 @@
         <b-nav-item href="https://github.com/dianw/crema" target="_blank">
           <i class="fa fa-github"></i>
         </b-nav-item>
-      </b-nav>
+      </b-navbar-nav>
     </b-navbar>
   </header>
 </template>
