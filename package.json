@@ -15,7 +15,7 @@
   "dependencies": {
     "@nuxtjs/font-awesome": "^1.0.4",
     "bootstrap": "4.4.1",
-    "bootstrap-vue": "^2.0.4",
+    "bootstrap-vue": "^2.2.1",
     "firebase": "^7.2.3",
     "node-forge": "^0.9.1",
     "nuxt": "^2.10.2"
