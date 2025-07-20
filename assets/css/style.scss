@@ -9,3 +9,69 @@
 body {
   font-family: system-ui, -apple-system, sans-serif;
 }
+
+// Sidebar styles
+.sidebar {
+  transition: all 0.3s ease-in-out;
+}
+
+// Mobile overlay for sidebar
+.sidebar-mobile-overlay {
+  transition: opacity 0.3s ease-in-out;
+}
+
+// Responsive styles for sidebar states
+@media (min-width: 1024px) {
+  // Desktop minimized state
+  body.sidebar-minimized .sidebar {
+    width: 4rem; /* 64px / 16px = 4rem */
+  }
+
+  body.sidebar-minimized .sidebar .sidebar-text {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  // Main content adjustment for minimized sidebar
+  body.sidebar-minimized main {
+    margin-left: 4rem;
+  }
+
+  body:not(.sidebar-minimized) main {
+    margin-left: 16rem; /* 256px / 16px = 16rem (w-64) */
+  }
+
+  // Ensure sidebar is positioned properly on desktop
+  .sidebar {
+    position: fixed;
+    top: 4rem; /* Account for header height (py-4 * 2 + content) */
+    left: 0;
+    height: calc(100vh - 4rem);
+    z-index: 30;
+  }
+}
+
+// Mobile styles
+@media (max-width: 1023px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  body.sidebar-mobile-show .sidebar {
+    transform: translateX(0);
+  }
+
+  body.sidebar-mobile-show .sidebar-mobile-overlay {
+    display: block !important;
+  }
+
+  main {
+    margin-left: 0 !important;
+  }
+}
+
+// Tooltip positioning for minimized sidebar
+.sidebar .group:hover .group-hover\:opacity-100 {
+  left: 100%;
+  margin-left: 0.5rem;
+}

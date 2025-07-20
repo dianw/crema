@@ -1,9 +1,10 @@
 <template>
   <div class="min-h-screen bg-gray-100">
     <Header :current-user="currentUser" />
-    <div class="flex">
+    <div class="relative">
       <Sidebar :nav-items="nav" />
-      <main class="flex-1 p-6">
+      <!-- Main content with responsive margin handled by CSS -->
+      <main class="p-6 transition-all duration-300 ease-in-out">
         <slot />
       </main>
     </div>
