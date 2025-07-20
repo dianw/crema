@@ -1,5 +1,7 @@
-export const state = () => ({
-  countries: {
+import { defineStore } from 'pinia'
+
+export const useCountryStore = defineStore('country', () => {
+  const countries = {
     AF: 'Afghanistan',
     AX: 'Åland Islands',
     AL: 'Albania',
@@ -50,6 +52,7 @@ export const state = () => ({
     CL: 'Chile',
     CN: 'China',
     CX: 'Christmas Island',
+    CP: 'Clipperton Island',
     CC: 'Cocos (Keeling) Islands',
     CO: 'Colombia',
     KM: 'Comoros',
@@ -62,7 +65,7 @@ export const state = () => ({
     CU: 'Cuba',
     CW: 'Curaçao',
     CY: 'Cyprus',
-    CZ: 'Czech Republic',
+    CZ: 'Czechia',
     DK: 'Denmark',
     DG: 'Diego Garcia',
     DJ: 'Djibouti',
@@ -74,6 +77,7 @@ export const state = () => ({
     GQ: 'Equatorial Guinea',
     ER: 'Eritrea',
     EE: 'Estonia',
+    SZ: 'Eswatini',
     ET: 'Ethiopia',
     FK: 'Falkland Islands',
     FO: 'Faroe Islands',
@@ -131,8 +135,7 @@ export const state = () => ({
     LI: 'Liechtenstein',
     LT: 'Lithuania',
     LU: 'Luxembourg',
-    MO: 'Macau SAR China',
-    MK: 'Macedonia',
+    MO: 'Macao SAR China',
     MG: 'Madagascar',
     MW: 'Malawi',
     MY: 'Malaysia',
@@ -166,6 +169,7 @@ export const state = () => ({
     NU: 'Niue',
     NF: 'Norfolk Island',
     KP: 'North Korea',
+    MK: 'North Macedonia',
     MP: 'Northern Mariana Islands',
     NO: 'Norway',
     OM: 'Oman',
@@ -216,7 +220,6 @@ export const state = () => ({
     SD: 'Sudan',
     SR: 'Suriname',
     SJ: 'Svalbard & Jan Mayen',
-    SZ: 'Swaziland',
     SE: 'Sweden',
     CH: 'Switzerland',
     SY: 'Syria',
@@ -253,5 +256,9 @@ export const state = () => ({
     YE: 'Yemen',
     ZM: 'Zambia',
     ZW: 'Zimbabwe'
+  }
+
+  return {
+    countries: readonly(countries)
   }
 })

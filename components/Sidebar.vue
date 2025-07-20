@@ -1,74 +1,31 @@
 <template>
-  <div class="sidebar">
-    <nav class="sidebar-nav">
-      <div slot="header"></div>
-      <ul class="nav">
-        <li class="nav-item" v-for="(item, index) in navItems">
-          <template v-if="item.title">
-            <SidebarNavTitle :name="item.name"/>
-          </template>
-          <template v-else-if="item.divider">
-            <li class="divider"></li>
-          </template>
-          <template v-else>
-            <template v-if="item.children">
-              <SidebarNavDropdown :name="item.name" :to="item.to" :icon="item.icon">
-                <template v-for="(child, index) in item.children">
-                  <template v-if="child.children">
-                    <SidebarNavDropdown :name="child.name" :to="child.to" :icon="child.icon">
-                      <li class="nav-item" v-for="(child, index) in item.children">
-                        <SidebarNavLink :name="child.name" :to="child.to" :icon="child.icon" :badge="child.badge"/>
-                      </li>
-                    </SidebarNavDropdown>
-                  </template>
-                  <template v-else>
-                    <li class="nav-item">
-                      <SidebarNavLink :name="child.name" :to="child.to" :icon="child.icon" :badge="child.badge"/>
-                    </li>
-                  </template>
-                </template>
-              </SidebarNavDropdown>
-            </template>
-            <template v-else>
-              <SidebarNavLink :name="item.name" :to="item.to" :icon="item.icon" :badge="item.badge"/>
-            </template>
-          </template>
+  <div class="w-64 bg-gray-800 min-h-screen">
+    <nav class="p-4">
+      <ul class="space-y-2">
+        <li v-for="(item, index) in navItems" :key="index">
+          <NuxtLink
+            :to="item.to"
+            class="flex items-center space-x-3 text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg px-3 py-2 transition-colors"
+            active-class="bg-gray-700 text-white"
+          >
+            <i :class="item.icon" class="w-5 h-5"></i>
+            <span>{{ item.name }}</span>
+          </NuxtLink>
         </li>
       </ul>
-      <slot></slot>
-      <div slot="footer"></div>
     </nav>
   </div>
 </template>
-<script>
-import SidebarNavDropdown from './SidebarNavDropdown'
-import SidebarNavLink from './SidebarNavLink'
-import SidebarNavTitle from './SidebarNavTitle'
-export default {
-  name: 'sidebar',
-  props: {
-    navItems: {
-      type: Array,
-      required: true,
-      default: () => []
-    }
-  },
-  components: {
-    SidebarNavDropdown,
-    SidebarNavLink,
-    SidebarNavTitle
-  },
-  methods: {
-    handleClick (e) {
-      e.preventDefault()
-      e.target.parentElement.classList.toggle('open')
-    }
-  }
+<script setup lang="ts">
+interface NavItem {
+  name: string
+  to: { name: string }
+  icon: string
 }
-</script>
 
-<style lang="css">
-  .nav-link {
-    cursor:pointer;
-  }
-</style>
+interface Props {
+  navItems: NavItem[]
+}
+
+defineProps<Props>()
+</script>

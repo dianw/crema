@@ -1,72 +1,43 @@
 <template>
-  <div class="app">
+  <div class="min-h-screen bg-gray-100">
     <AppHeader :current-user="currentUser" />
-    <div class="app-body">
+    <div class="flex">
       <Sidebar :nav-items="nav" />
-      <main class="main">
-        <div class="container-fluid my-3">
-          <nuxt />
-        </div>
+      <main class="flex-1 p-6">
+        <slot />
       </main>
-      <!-- <AppAside/> -->
     </div>
     <AppFooter/>
   </div>
 </template>
 
-<script>
-import { Header as AppHeader, Sidebar, Aside as AppAside, Footer as AppFooter, Breadcrumb } from '~/components/'
-import { mapActions, mapState } from 'vuex'
+<script setup lang="ts">
+import { Header as AppHeader, Sidebar, Footer as AppFooter } from '~/components/'
 
-export default {
-  name: 'full',
-  components: {
-    AppHeader,
-    Sidebar,
-    AppAside,
-    AppFooter,
-    Breadcrumb
+const authStore = useAuthStore()
+const route = useRoute()
+
+const currentUser = computed(() => authStore.currentUser)
+
+const nav = [
+  {
+    name: 'Hash',
+    to: { name: 'hash' },
+    icon: 'fa fa-calculator'
   },
-  data () {
-    return {
-      nav: [
-        {
-          name: 'Hash',
-          to: { name: 'hash' },
-          icon: 'fa fa-calculator'
-        },
-        {
-          name: 'RSA KeyGen',
-          to: { name: 'public-key-infrastructure-rsa-keygen' },
-          icon: 'fa fa-shield'
-        },
-        {
-          name: 'Cert Signing Request',
-          to: { name: 'public-key-infrastructure-cert-signing-req' },
-          icon: 'fa fa-id-card'
-        }
-      ]
-    }
+  {
+    name: 'RSA KeyGen',
+    to: { name: 'public-key-infrastructure-rsa-keygen' },
+    icon: 'fa fa-shield'
   },
-  computed: {
-    name () {
-      return this.$route.name
-    },
-    list () {
-      return this.$route.matched
-    },
-    ...mapState({
-      currentUser: state => state.auth.currentUser
-    })
-  },
-  methods: {
-    ...mapActions({
-      login: 'auth/login',
-      checkLoggedIn: 'auth/isLoggedIn'
-    })
-  },
-  mounted () {
-    this.checkLoggedIn()
+  {
+    name: 'Cert Signing Request',
+    to: { name: 'public-key-infrastructure-cert-signing-req' },
+    icon: 'fa fa-id-card'
   }
-}
+]
+
+onMounted(() => {
+  authStore.isLoggedIn()
+})
 </script>

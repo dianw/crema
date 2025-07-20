@@ -1,53 +1,52 @@
 <template>
-  <b-card>
+  <div class="bg-white shadow-md rounded-lg p-6">
     <div v-if="currentUser">
-      <h1>
-        <i class="fa fa-user"></i>
+      <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+        <i class="fa fa-user mr-3"></i>
         {{ currentUser.displayName }}
       </h1>
     </div>
     <div v-else>
-      <h1>
+      <h1 class="text-3xl font-bold text-gray-900 mb-6">
         Login with
       </h1>
-      <div class="d-flex flex-wrap">
-        <div class="p-2">
-          <b-button variant="secondary" size="lg" @click="login('Google')">
-            <i class="fa fa-google"></i>
-            <span>
-              Google
-            </span>
-          </b-button>
+      <div class="flex flex-wrap gap-4">
+        <div>
+          <button
+            @click="login('Google')"
+            class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition-colors flex items-center"
+          >
+            <i class="fa fa-google mr-2"></i>
+            <span>Google</span>
+          </button>
         </div>
-        <div class="p-2">
-          <b-button variant="secondary" size="lg" @click="login('Github')">
-            <i class="fa fa-github"></i>
-            <span>
-              GitHub
-            </span>
-          </b-button>
+        <div>
+          <button
+            @click="login('Github')"
+            class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition-colors flex items-center"
+          >
+            <i class="fa fa-github mr-2"></i>
+            <span>GitHub</span>
+          </button>
         </div>
       </div>
     </div>
-  </b-card>
+  </div>
 </template>
 
-<script>
-import { mapActions, mapState } from 'vuex'
+<script setup lang="ts">
+interface User {
+  displayName?: string | null
+  email?: string | null
+  uid?: string
+  [key: string]: any
+}
 
-export default {
-  data: () => ({
-  }),
-  computed: {
-    ...mapState({
-      currentUser: state => state.auth.currentUser
-    })
-  },
-  methods: {
-    ...mapActions({
-      login: 'auth/login',
-      checkLoggedIn: 'auth/isLoggedIn'
-    })
-  }
+const authStore = useAuthStore()
+
+const currentUser = computed((): User | null => authStore.currentUser)
+
+const login = (provider: string): void => {
+  authStore.login(provider)
 }
 </script>

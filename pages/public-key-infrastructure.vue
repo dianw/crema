@@ -1,11 +1,9 @@
 <template>
   <div>
-    <nuxt-child />
+    <NuxtPage />
   </div>
 </template>
 
-<script>
-export default {
-
-}
+<script setup lang="ts">
+// This page only contains NuxtPage, no script logic needed
 </script>

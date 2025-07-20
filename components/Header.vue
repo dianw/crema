@@ -1,51 +1,70 @@
 <template>
-  <header>
-    <b-navbar class="app-header">
-      <b-button class="navbar-toggler mobile-sidebar-toggler d-lg-none" @click="mobileSidebarToggle">&#9776;</b-button>
-      <b-navbar-brand :to="{ name: 'index' }">
-        <h2>crema</h2>
-      </b-navbar-brand>
-      <b-button class="navbar-toggler sidebar-toggler d-md-down-none mr-auto" @click="sidebarMinimize">&#9776;</b-button>
-      <b-navbar-nav class="ml-auto">
-        <b-nav-item :to="{ name: 'login' }" v-if="!currentUser || !currentUser.displayName">
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <nav class="flex items-center justify-between px-6 py-4">
+      <div class="flex items-center space-x-4">
+        <button class="lg:hidden text-gray-600 hover:text-gray-900" @click="mobileSidebarToggle">
+          <span class="text-xl">&#9776;</span>
+        </button>
+        <NuxtLink :to="{ name: 'index' }" class="text-2xl font-bold text-gray-900 hover:text-gray-700">
+          crema
+        </NuxtLink>
+        <button class="hidden md:block text-gray-600 hover:text-gray-900" @click="sidebarMinimize">
+          <span class="text-xl">&#9776;</span>
+        </button>
+      </div>
+      <div class="flex items-center space-x-4">
+        <NuxtLink
+          v-if="!currentUser || !currentUser.displayName"
+          :to="{ name: 'login' }"
+          class="text-gray-600 hover:text-gray-900 transition-colors"
+        >
           Login
-        </b-nav-item>
-        <b-nav-item href="#" v-else>
+        </NuxtLink>
+        <span v-else class="text-gray-700">
           {{ currentUser.displayName }}
-        </b-nav-item>
-        <b-nav-item href="https://github.com/dianw/crema" target="_blank">
-          <i class="fa fa-github"></i>
-        </b-nav-item>
-      </b-navbar-nav>
-    </b-navbar>
+        </span>
+        <a
+          href="https://github.com/dianw/crema"
+          target="_blank"
+          class="text-gray-600 hover:text-gray-900 transition-colors"
+        >
+          <i class="fa fa-github text-lg"></i>
+        </a>
+      </div>
+    </nav>
   </header>
 </template>
-<script>
-export default {
-  name: 'header',
-  props: {
-    currentUser: {
-      type: Object,
-      default: () => ({})
-    }
-  },
-  methods: {
-    sidebarToggle (e) {
-      e.preventDefault()
-      document.body.classList.toggle('sidebar-hidden')
-    },
-    sidebarMinimize (e) {
-      e.preventDefault()
-      document.body.classList.toggle('sidebar-minimized')
-    },
-    mobileSidebarToggle (e) {
-      e.preventDefault()
-      document.body.classList.toggle('sidebar-mobile-show')
-    },
-    asideToggle (e) {
-      e.preventDefault()
-      document.body.classList.toggle('aside-menu-hidden')
-    }
-  }
+<script setup lang="ts">
+interface User {
+  displayName?: string | null
+  email?: string | null
+  uid?: string
+  [key: string]: any
+}
+
+interface Props {
+  currentUser?: User | null
+}
+
+defineProps<Props>()
+
+const sidebarToggle = (e: Event): void => {
+  e.preventDefault()
+  document.body.classList.toggle('sidebar-hidden')
+}
+
+const sidebarMinimize = (e: Event): void => {
+  e.preventDefault()
+  document.body.classList.toggle('sidebar-minimized')
+}
+
+const mobileSidebarToggle = (e: Event): void => {
+  e.preventDefault()
+  document.body.classList.toggle('sidebar-mobile-show')
+}
+
+const asideToggle = (e: Event): void => {
+  e.preventDefault()
+  document.body.classList.toggle('aside-menu-hidden')
 }
 </script>
