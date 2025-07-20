@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-// @ts-expect-error - node-forge doesn't have proper TypeScript declarations
 import { pki } from 'node-forge'
 
 interface SubjectDN {
@@ -38,13 +37,13 @@ export const useCsrStore = defineStore('csr', () => {
     const { useRsagenStore } = await import('./rsagen')
     const rsagenStore = useRsagenStore()
 
-    const keyPair = await rsagenStore.generate(keySize)
+    const keyPair = await rsagenStore.generate(keySize) as { publicKey: pki.PublicKey, privateKey: pki.PrivateKey }
     await setSubjectAction(dnValue)
 
     const csrObj = pki.createCertificationRequest()
     csrObj.publicKey = keyPair.publicKey
     csrObj.setSubject(subject.value)
-    csrObj.sign(keyPair.privateKey)
+    csrObj.sign(keyPair.privateKey as pki.MDSigner)
 
     const signedCsr = {
       csr: csrObj,

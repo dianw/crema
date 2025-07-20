@@ -47,7 +47,7 @@
           <input
             type="file"
             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-            @change="(e) => { const target = e.target as HTMLInputElement; if (target.files) calculateHash({ input: target.files[0], alg, isText: false }) }"
+            @change="(e) => { const target = e.target as HTMLInputElement; if (target.files && target.files[0]) calculateHash({ input: target.files[0], alg, isText: false }) }"
           >
         </div>
       </div>
@@ -83,25 +83,12 @@ const hashStore = useHashStore()
 
 const activeTab = ref<'text' | 'file'>('text')
 
-const algs: Algorithm[] = [
-  {
-    text: 'MD5',
-    value: 'md5'
-  },
-  {
-    text: 'SHA-1',
-    value: 'sha1'
-  },
-  {
-    text: 'SHA-256',
-    value: 'sha256'
-  },
-  {
-    text: 'SHA-512',
-    value: 'sha512'
-  }
-]
-
+const algs = computed((): Algorithm[] => {
+  return hashStore.algs.map(alg => ({
+    text: alg.toUpperCase(),
+    value: alg
+  }))
+})
 const alg = computed(() => hashStore.alg)
 const input = computed(() => hashStore.input)
 const outputHex = computed(() => hashStore.outputHex)
