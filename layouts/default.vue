@@ -20,7 +20,7 @@ const currentUser = computed(() => authStore.currentUser)
 
 const nav = [
   {
-    name: 'Hash',
+    name: 'Message Digests',
     to: { name: 'hash' },
     icon: 'fa fa-calculator'
   },
