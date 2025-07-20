@@ -1,4 +1,4 @@
-import { md, util } from 'node-forge'
+import { hmac, md, util } from 'node-forge'
 import type { HashResult } from '~/types'
 
 interface HashInputData {
@@ -9,7 +9,9 @@ interface HashInputData {
 interface CalculateParams {
   alg: string
   input: string | File
-  isText: boolean
+  isText: boolean,
+  isHmac: boolean
+  hmacKey: string
 }
 
 export const useHashStore = defineStore('hash', () => {
@@ -34,12 +36,19 @@ export const useHashStore = defineStore('hash', () => {
     outputHex.value = input.value === '' ? '' : message.toHex()
   }
 
-  const calculate = async ({ alg: algorithm, input: inputValue, isText }: CalculateParams) => {
+  const calculate = async ({ alg: algorithm, input: inputValue, isText, isHmac, hmacKey }: CalculateParams) => {
     const algoObj = (md as unknown as Record<string, { create(): md.MessageDigest }>)[algorithm]
     if (!algoObj) {
       throw new Error(`Algorithm "${algorithm}" is not supported.`)
     }
-    const message = algoObj.create() as md.MessageDigest
+    const message = isHmac ? hmac.create() : algoObj.create() as md.MessageDigest | hmac.HMAC
+    if (isHmac) {
+      if (!hmacKey) {
+        throw new Error('HMAC key must be provided for HMAC operations.')
+      }
+      (message as hmac.HMAC).start(algoObj.create(), hmacKey)
+    }
+
     if (isText) {
       (message as { update(data: string): void }).update(inputValue as string)
       setInput({ isText: true, input: inputValue as string })

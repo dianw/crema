@@ -9,7 +9,7 @@
           :to="{ name: 'hash' }"
           class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 inline-block"
         >
-          Hash Calculator
+          Message Digests
         </NuxtLink>
       </div>
       <div>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="text-2xl font-bold mb-4">Hash Calculator</h3>
+    <h3 class="text-2xl font-bold mb-4">Message Digests</h3>
     <div class="bg-white shadow-md rounded-lg p-6">
       <div class="mb-4">
         <label for="algorithm" class="block text-sm font-medium text-gray-700 mb-2">Algorithm</label>
@@ -14,6 +14,31 @@
             {{ option.text }}
           </option>
         </select>
+      </div>
+
+      <div class="mb-4">
+        <div class="flex items-center">
+          <input
+            id="hmac"
+            v-model="isHmac"
+            type="checkbox"
+            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+          >
+          <label for="hmac" class="ml-2 block text-sm font-medium text-gray-700">
+            HMAC
+          </label>
+        </div>
+        <div v-if="isHmac" class="mt-3">
+          <label for="key" class="block text-sm font-medium text-gray-700 mb-2">Key</label>
+          <input
+            id="key"
+            v-model="hmacKey"
+            type="text"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="Enter HMAC key"
+            @input="calculateHashWithCurrentInputs"
+          >
+        </div>
       </div>
 
       <div class="flex border-b border-gray-200 mb-4">
@@ -76,12 +101,16 @@ interface Algorithm {
 interface HashParams {
   input: string | File
   alg: string
-  isText: boolean
+  isText: boolean,
+  isHmac: boolean,
+  hmacKey: string
 }
 
 const hashStore = useHashStore()
 
 const activeTab = ref<'text' | 'file'>('text')
+const isHmac = ref<boolean>(false)
+const hmacKey = ref<string>('')
 
 const algs = computed((): Algorithm[] => {
   return hashStore.algs.map(alg => ({
@@ -100,4 +129,15 @@ const setHashAlg = (algorithm: string): void => {
 const calculateHash = async (params: HashParams): Promise<void> => {
   await hashStore.calculate(params)
 }
+
+const calculateHashWithCurrentInputs = (): void => {
+  if (activeTab.value === 'text' && input.value) {
+    calculateHash({ input: input.value, alg: alg.value, isText: true, isHmac: isHmac.value, hmacKey: hmacKey.value })
+  }
+}
+
+// Watch for HMAC checkbox changes to recalculate hash
+watch(isHmac, () => {
+  calculateHashWithCurrentInputs()
+})
 </script>
