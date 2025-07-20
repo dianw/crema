@@ -4,14 +4,14 @@
     <div class="bg-white shadow-md rounded-lg p-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <form @submit.prevent="generate" class="space-y-4">
+          <form class="space-y-4" @submit.prevent="generate">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Key Size</label>
               <select
                 :value="keySize"
-                @input="handleKeySizeChange"
                 :disabled="generating"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                @input="handleKeySizeChange"
               >
                 <option v-for="size in keySizes" :key="size" :value="size">{{ size }}</option>
               </select>
@@ -22,7 +22,7 @@
                 v-model="dn.commonName"
                 :disabled="generating"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              />
+              >
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Organization</label>
@@ -30,7 +30,7 @@
                 v-model="dn.organizationName"
                 :disabled="generating"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              />
+              >
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Department</label>
@@ -38,7 +38,7 @@
                 v-model="dn.organizationalUnitName"
                 :disabled="generating"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              />
+              >
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
@@ -46,7 +46,7 @@
                 v-model="dn.localityName"
                 :disabled="generating"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              />
+              >
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">State / Province</label>
@@ -54,7 +54,7 @@
                 v-model="dn.stateOrProvinceName"
                 :disabled="generating"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              />
+              >
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
@@ -88,7 +88,7 @@
             />
           </div>
           <div>
-            <key-pair-tab :key-pair="keyPair"></key-pair-tab>
+            <key-pair-tab :key-pair="keyPair"/>
           </div>
         </div>
       </div>
@@ -126,7 +126,6 @@ const dn = ref<DistinguishedName>({
 
 const generating = ref<boolean>(false)
 
-const subject = computed(() => csrStore.subject)
 const subjectDn = computed(() => csrStore.dn)
 const csrPem = computed(() => csrStore.pem)
 const keySize = computed(() => rsagenStore.keySize)

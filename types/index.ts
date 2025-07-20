@@ -2,8 +2,6 @@
  * Global type definitions for the application
  */
 
-import type { User as FirebaseUser } from 'firebase/auth'
-
 export interface User {
   displayName: string | null
   email: string | null
@@ -17,7 +15,7 @@ export interface HashResult {
   input: string
   isText: boolean
   output: string
-  digest?: any
+  digest?: unknown
 }
 
 export interface RSAKeyPair {

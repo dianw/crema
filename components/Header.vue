@@ -28,7 +28,7 @@
           target="_blank"
           class="text-gray-600 hover:text-gray-900 transition-colors"
         >
-          <i class="fa fa-github text-lg"></i>
+          <i class="fa fa-github text-lg"/>
         </a>
       </div>
     </nav>
@@ -39,19 +39,18 @@ interface User {
   displayName?: string | null
   email?: string | null
   uid?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 interface Props {
   currentUser?: User | null
 }
 
-defineProps<Props>()
+defineOptions({
+  name: 'AppHeader'
+})
 
-const sidebarToggle = (e: Event): void => {
-  e.preventDefault()
-  document.body.classList.toggle('sidebar-hidden')
-}
+defineProps<Props>()
 
 const sidebarMinimize = (e: Event): void => {
   e.preventDefault()
@@ -61,10 +60,5 @@ const sidebarMinimize = (e: Event): void => {
 const mobileSidebarToggle = (e: Event): void => {
   e.preventDefault()
   document.body.classList.toggle('sidebar-mobile-show')
-}
-
-const asideToggle = (e: Event): void => {
-  e.preventDefault()
-  document.body.classList.toggle('aside-menu-hidden')
 }
 </script>

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-// @ts-ignore
+// @ts-expect-error - node-forge doesn't have proper TypeScript declarations
 import { pki } from 'node-forge'
 
 interface SubjectDN {
@@ -13,11 +13,11 @@ interface SubjectItem {
 
 export const useCsrStore = defineStore('csr', () => {
   const dn = ref<SubjectDN | null>(null)
-  const csr = ref<any>(null)
+  const csr = ref<unknown>(null)
   const pem = ref<string | null>(null)
   const subject = ref<SubjectItem[]>([])
 
-  const setCSR = ({ csr: csrValue, pem: pemValue }: { csr: any, pem: string }) => {
+  const setCSR = ({ csr: csrValue, pem: pemValue }: { csr: unknown, pem: string }) => {
     csr.value = csrValue
     pem.value = pemValue
   }

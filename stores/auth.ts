@@ -34,6 +34,7 @@ export const useAuthStore = defineStore('auth', () => {
       setCurrentUser(result.user)
       return result.user
     } catch (error) {
+      console.error('Login error:', error)
       throw error
     }
   }
@@ -56,6 +57,7 @@ export const useAuthStore = defineStore('auth', () => {
       await signOut($auth)
       setCurrentUser(null)
     } catch (error) {
+      console.error('Logout error:', error)
       throw error
     }
   }

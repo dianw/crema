@@ -38,9 +38,9 @@
           <textarea
             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             :value="input"
-            @input="(e) => { const target = e.target as HTMLTextAreaElement; calculateHash({ input: target.value, alg, isText: true }) }"
             placeholder="Insert text here"
             rows="5"
+            @input="(e) => { const target = e.target as HTMLTextAreaElement; calculateHash({ input: target.value, alg, isText: true }) }"
           />
         </div>
         <div v-if="activeTab === 'file'">
@@ -48,7 +48,7 @@
             type="file"
             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             @change="(e) => { const target = e.target as HTMLInputElement; if (target.files) calculateHash({ input: target.files[0], alg, isText: false }) }"
-          />
+          >
         </div>
       </div>
 

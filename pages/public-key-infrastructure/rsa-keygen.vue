@@ -8,23 +8,23 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">Key Size</label>
             <select
               :value="keySize"
-              @input="handleKeySizeChange"
               :disabled="generating"
               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              @input="handleKeySizeChange"
             >
               <option v-for="size in keySizes" :key="size" :value="size">{{ size }}</option>
             </select>
           </div>
           <div class="mb-4">
             <button
-              @click="generate"
               :disabled="generating"
               class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg text-lg transition-colors"
+              @click="generate"
             >
               {{ generating ? 'Generating...' : 'Generate Key Pair' }}
             </button>
           </div>
-          <key-pair-tab :key-pair="keyPair" @save="saveKeyPair"></key-pair-tab>
+          <key-pair-tab :key-pair="keyPair" @save="saveKeyPair"/>
         </div>
         <div>
           <div class="bg-white border border-gray-200 rounded-lg">
@@ -44,13 +44,13 @@
                       :href="kp.data.storageDownloadUrl"
                       class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors"
                     >
-                      <i class="fa fa-download"></i>
+                      <i class="fa fa-download"/>
                     </a>
                     <button
-                      @click="rsagenDelete(kp.id)"
                       class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors"
+                      @click="rsagenDelete(kp.id)"
                     >
-                      <i class="fa fa-trash"></i>
+                      <i class="fa fa-trash"/>
                     </button>
                   </div>
                 </div>

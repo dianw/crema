@@ -1,16 +1,16 @@
 import { defineStore } from 'pinia'
-// @ts-ignore
+// @ts-expect-error - node-forge doesn't have proper TypeScript declarations
 import { pki } from 'node-forge'
 
 interface KeyPairData {
   id: string
-  data: any
+  data: unknown
 }
 
 export const useRsagenStore = defineStore('rsagen', () => {
   const keySize = ref<number>(2048)
   const keySizes = ref<number[]>([512, 1024, 2048, 4096])
-  const keyPair = ref<any>(null)
+  const keyPair = ref<unknown>(null)
   const keyPairs = ref<KeyPairData[]>([])
 
   const { $db, $storage, $serverTimestamp } = useNuxtApp()
@@ -23,7 +23,7 @@ export const useRsagenStore = defineStore('rsagen', () => {
     keySize.value = size
   }
 
-  const setKeyPair = (pair: any) => {
+  const setKeyPair = (pair: unknown) => {
     keyPair.value = pair
   }
 
@@ -32,29 +32,29 @@ export const useRsagenStore = defineStore('rsagen', () => {
   }
 
   const deleteKeyPair = async (docId: string) => {
-    // @ts-ignore
+    // @ts-expect-error - Firebase types not available in this context
     await $db.collection('keyPairs').doc(docId).delete()
     return fetch()
   }
 
   const fetch = async () => {
     const authStore = useAuthStore()
-    const currentUser = authStore.currentUser as any
+    const currentUser = authStore.currentUser as unknown
 
     if (!currentUser) {
       return null
     }
 
-    // @ts-ignore
+    // @ts-expect-error - Firebase types not available in this context
     const docs = await $db.collection('keyPairs')
-      .where('uid', '==', currentUser.uid)
+      .where('uid', '==', (currentUser as { uid: string }).uid)
       .orderBy('createdDate', 'desc')
       .get()
 
     setKeyPairs([])
-    docs.forEach((doc: any) => addKeyPair({
-      id: doc.id,
-      data: doc.data()
+    docs.forEach((doc: unknown) => addKeyPair({
+      id: (doc as { id: string }).id,
+      data: (doc as { data(): unknown }).data()
     }))
 
     return docs
@@ -64,14 +64,14 @@ export const useRsagenStore = defineStore('rsagen', () => {
     setKeyPair({})
 
     return new Promise((resolve, reject) => {
-      pki.rsa.generateKeyPair({ bits: keySize, workers: 4 }, (err: any, keyPair: any) => {
+      pki.rsa.generateKeyPair({ bits: keySize, workers: 4 }, (err: unknown, keyPair: unknown) => {
         if (err) {
           reject(err)
         } else {
           resolve(keyPair)
         }
       })
-    }).then((keyPair: any) => {
+    }).then((keyPair: unknown) => {
       setKeyPair(keyPair)
       return keyPair
     })
@@ -79,7 +79,7 @@ export const useRsagenStore = defineStore('rsagen', () => {
 
   const save = async ({ name, password, key }: { name: string, password: string, key: string }) => {
     const authStore = useAuthStore()
-    const currentUser = authStore.currentUser as any
+    const currentUser = authStore.currentUser as unknown
 
     if (!currentUser) {
       return null
@@ -88,12 +88,12 @@ export const useRsagenStore = defineStore('rsagen', () => {
     const privateKey = pki.privateKeyFromPem(key)
     const pem = pki.encryptRsaPrivateKey(privateKey, password)
 
-    // @ts-ignore
+    // @ts-expect-error - Firebase types not available in this context
     const keyPairsRef = $db.collection('keyPairs').doc()
-    // @ts-ignore
-    const keyPairsStorageRef = $storage.ref().child(`key-pairs/${currentUser.uid}/${keyPairsRef.id}-${name}.pem`)
+    // @ts-expect-error - Firebase types not available in this context
+    const keyPairsStorageRef = $storage.ref().child(`key-pairs/${(currentUser as { uid: string }).uid}/${keyPairsRef.id}-${name}.pem`)
 
-    const snapshot = await keyPairsStorageRef.putString(pem)
+    await keyPairsStorageRef.putString(pem)
     const downloadUrl = await keyPairsStorageRef.getDownloadURL()
 
     await keyPairsRef.set({
@@ -101,7 +101,7 @@ export const useRsagenStore = defineStore('rsagen', () => {
       storagePath: keyPairsStorageRef.fullPath,
       storageDownloadUrl: downloadUrl,
       name,
-      uid: currentUser.uid
+      uid: (currentUser as { uid: string }).uid
     })
 
     await fetch()

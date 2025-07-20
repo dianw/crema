@@ -14,7 +14,6 @@
 <script setup lang="ts">
 // Components are auto-imported in Nuxt 4
 const authStore = useAuthStore()
-const route = useRoute()
 
 const currentUser = computed(() => authStore.currentUser)
 

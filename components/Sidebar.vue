@@ -8,7 +8,7 @@
             class="flex items-center space-x-3 text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg px-3 py-2 transition-colors"
             active-class="bg-gray-700 text-white"
           >
-            <i :class="item.icon" class="w-5 h-5"></i>
+            <i :class="item.icon" class="w-5 h-5"/>
             <span>{{ item.name }}</span>
           </NuxtLink>
         </li>
@@ -26,6 +26,10 @@ interface NavItem {
 interface Props {
   navItems: NavItem[]
 }
+
+defineOptions({
+  name: 'AppSidebar'
+})
 
 defineProps<Props>()
 </script>

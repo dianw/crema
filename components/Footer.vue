@@ -6,5 +6,8 @@
   </footer>
 </template>
 <script setup lang="ts">
-// Footer component using Composition API
+// AppFooter component using Composition API
+defineOptions({
+  name: 'AppFooter'
+})
 </script>

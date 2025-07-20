@@ -1,8 +1,7 @@
 import { initializeApp, getApps } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import { getFirestore, serverTimestamp  } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
-import { serverTimestamp } from 'firebase/firestore'
 
 export default defineNuxtPlugin(() => {
   const config = {

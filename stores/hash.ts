@@ -1,6 +1,5 @@
 import { md } from 'node-forge'
 import type { HashResult } from '~/types'
-import { HASH_ALGORITHMS } from '~/utils/constants'
 
 interface HashInputData {
   input: string
@@ -18,7 +17,7 @@ export const useHashStore = defineStore('hash', () => {
   const input = ref<string>('')
   const isInputText = ref<boolean>(true)
   const outputHex = ref<string>('')
-  const outputMd = ref<any>(null)
+  const outputMd = ref<unknown>(null)
 
   const setAlg = (algorithm: string) => {
     alg.value = algorithm
@@ -29,15 +28,15 @@ export const useHashStore = defineStore('hash', () => {
     isInputText.value = inputData.isText
   }
 
-  const setOutput = (message: any) => {
+  const setOutput = (message: unknown) => {
     outputMd.value = message
-    outputHex.value = input.value === '' ? '' : message.digest().toHex()
+    outputHex.value = input.value === '' ? '' : (message as { digest(): { toHex(): string } }).digest().toHex()
   }
 
   const calculate = async ({ alg: algorithm, input: inputValue, isText }: CalculateParams) => {
-    const message = (md as any)[algorithm].create()
+    const message = (md as Record<string, { create(): unknown }>)[algorithm].create()
     if (isText) {
-      message.update(inputValue as string)
+      (message as { update(data: string): void }).update(inputValue as string)
       setInput({ isText: true, input: inputValue as string })
     } else {
       // Handle file input
