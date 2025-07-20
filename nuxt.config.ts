@@ -4,6 +4,7 @@ export default defineNuxtConfig({
 
   // App configuration
   app: {
+    baseURL: process.env.NUXT_APP_BASE_URL || '/',
     head: {
       title: 'Crema - Graphical Crypto Toolkit',
       meta: [
@@ -41,15 +42,27 @@ export default defineNuxtConfig({
     '~/plugins/route.client.ts'
   ],
 
-  // Router configuration
+  // Router configuration - updated for Nuxt 4
   router: {
     options: {
       hashMode: true
     }
   },
 
-  // SSR configuration (equivalent to mode: 'spa')
+  // SSR configuration - completely disabled for client-side only
   ssr: false,
+
+  // Nitro configuration for static generation
+  nitro: {
+    prerender: {
+      routes: ['/'],
+      crawlLinks: true
+    },
+    // GitHub Pages requires trailing slash handling
+    experimental: {
+      wasm: false
+    }
+  },
 
   // Vite configuration
   vite: {
@@ -67,6 +80,11 @@ export default defineNuxtConfig({
     typeCheck: false
   },
 
-  // Compatibility date
-  compatibilityDate: '2024-11-01'
+  // Compatibility date - updated for Nuxt 4
+  compatibilityDate: '2025-01-01',
+
+  // Future flags for Nuxt 4 features
+  future: {
+    compatibilityVersion: 4
+  }
 })

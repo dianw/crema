@@ -1,24 +1,32 @@
-import { defineStore } from 'pinia'
-import { GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth'
+import { GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, type User as FirebaseUser } from 'firebase/auth'
+import type { User } from '~/types'
 
 export const useAuthStore = defineStore('auth', () => {
-  const currentUser = ref(null)
+  const currentUser = ref<User | null>(null)
   const { $auth } = useNuxtApp()
 
-  const setCurrentUser = (user) => {
-    // deep clone user
-    currentUser.value = user ? JSON.parse(JSON.stringify(user)) : null
+  const setCurrentUser = (user: FirebaseUser | null) => {
+    // Convert Firebase user to our User type
+    currentUser.value = user ? {
+      displayName: user.displayName,
+      email: user.email,
+      uid: user.uid,
+      photoURL: user.photoURL,
+      emailVerified: user.emailVerified
+    } : null
   }
 
-  const login = async (authProvider = 'Google') => {
+  const login = async (authProvider: string = 'Google') => {
     const user = await isLoggedIn()
     if (user) {
       return user
     }
 
-    let provider
+    let provider: GoogleAuthProvider
     if (authProvider === 'Google') {
       provider = new GoogleAuthProvider()
+    } else {
+      throw new Error(`Unsupported auth provider: ${authProvider}`)
     }
 
     try {

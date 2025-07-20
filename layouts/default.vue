@@ -1,19 +1,18 @@
 <template>
   <div class="min-h-screen bg-gray-100">
-    <AppHeader :current-user="currentUser" />
+    <Header :current-user="currentUser" />
     <div class="flex">
       <Sidebar :nav-items="nav" />
       <main class="flex-1 p-6">
         <slot />
       </main>
     </div>
-    <AppFooter/>
+    <Footer/>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Header as AppHeader, Sidebar, Footer as AppFooter } from '~/components/'
-
+// Components are auto-imported in Nuxt 4
 const authStore = useAuthStore()
 const route = useRoute()
 
