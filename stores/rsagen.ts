@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-// @ts-expect-error - node-forge doesn't have proper TypeScript declarations
 import { pki } from 'node-forge'
 
 interface KeyPairData {

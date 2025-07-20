@@ -1,4 +1,4 @@
-import { md } from 'node-forge'
+import { md, util } from 'node-forge'
 import type { HashResult } from '~/types'
 
 interface HashInputData {
@@ -13,6 +13,7 @@ interface CalculateParams {
 }
 
 export const useHashStore = defineStore('hash', () => {
+  const algs = ref<string[]>(Object.keys(md.algorithms))
   const alg = ref<string>('sha256')
   const input = ref<string>('')
   const isInputText = ref<boolean>(true)
@@ -28,13 +29,17 @@ export const useHashStore = defineStore('hash', () => {
     isInputText.value = inputData.isText
   }
 
-  const setOutput = (message: unknown) => {
+  const setOutput = (message: util.ByteStringBuffer) => {
     outputMd.value = message
-    outputHex.value = input.value === '' ? '' : (message as { digest(): { toHex(): string } }).digest().toHex()
+    outputHex.value = input.value === '' ? '' : message.toHex()
   }
 
   const calculate = async ({ alg: algorithm, input: inputValue, isText }: CalculateParams) => {
-    const message = (md as Record<string, { create(): unknown }>)[algorithm].create()
+    const algoObj = (md as unknown as Record<string, { create(): md.MessageDigest }>)[algorithm]
+    if (!algoObj) {
+      throw new Error(`Algorithm "${algorithm}" is not supported.`)
+    }
+    const message = algoObj.create() as md.MessageDigest
     if (isText) {
       (message as { update(data: string): void }).update(inputValue as string)
       setInput({ isText: true, input: inputValue as string })
@@ -53,7 +58,7 @@ export const useHashStore = defineStore('hash', () => {
     }
 
     setAlg(algorithm)
-    setOutput(message)
+    setOutput(message.digest())
   }
 
   const hashResult = computed<HashResult | null>(() => {
@@ -69,6 +74,7 @@ export const useHashStore = defineStore('hash', () => {
   })
 
   return {
+    algs: readonly(algs),
     alg: readonly(alg),
     input: readonly(input),
     isInputText: readonly(isInputText),
