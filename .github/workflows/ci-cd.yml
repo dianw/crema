@@ -50,14 +50,14 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           mkdir -p docker-artifacts
-          cp -r .output docker-artifacts/
+          cp -r .output docker-artifacts/.output
           cp Dockerfile docker-artifacts/
           cp package*.json docker-artifacts/
       - name: Upload build artifacts for Docker
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
-          name: build-files
+          name: docker-artifacts
           path: docker-artifacts
           retention-days: 1
       - name: Upload artifact for GitHub Pages
