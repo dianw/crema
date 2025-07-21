@@ -101,15 +101,8 @@ import KeyPairTab from '~/components/KeyPairTab.vue'
 import { useCsrStore } from '~/stores/csr'
 import { useRsagenStore } from '~/stores/rsagen'
 import { useCountryStore } from '~/stores/country'
+import type { DistinguishedName } from '~/types'
 
-interface DistinguishedName {
-  commonName: string | null
-  organizationName: string | null
-  organizationalUnitName: string | null
-  localityName: string | null
-  stateOrProvinceName: string | null
-  countryName: string
-}
 
 const csrStore = useCsrStore()
 const rsagenStore = useRsagenStore()

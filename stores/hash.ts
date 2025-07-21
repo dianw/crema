@@ -1,18 +1,7 @@
-import { hmac, md, util } from 'node-forge'
-import type { HashResult } from '~/types'
 
-interface HashInputData {
-  input: string
-  isText: boolean
-}
-
-interface CalculateParams {
-  alg: string
-  input: string | File
-  isText: boolean,
-  isHmac: boolean
-  hmacKey: string
-}
+import type { util } from 'node-forge';
+import { hmac, md } from 'node-forge'
+import type { HashResult, HashInputData, CalculateParams  } from '~/types'
 
 export const useHashStore = defineStore('hash', () => {
   const algs = ref<string[]>(Object.keys(md.algorithms))

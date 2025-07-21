@@ -1,14 +1,7 @@
 import { defineStore } from 'pinia'
 import { pki } from 'node-forge'
+import type { SubjectDN, SubjectItem } from '~/types'
 
-interface SubjectDN {
-  [key: string]: string
-}
-
-interface SubjectItem {
-  name: string
-  value: string
-}
 
 export const useCsrStore = defineStore('csr', () => {
   const dn = ref<SubjectDN | null>(null)

@@ -35,12 +35,7 @@
 </template>
 
 <script setup lang="ts">
-interface User {
-  displayName?: string | null
-  email?: string | null
-  uid?: string
-  [key: string]: unknown
-}
+import type { User } from '~/types'
 
 const authStore = useAuthStore()
 

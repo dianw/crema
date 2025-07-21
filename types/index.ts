@@ -3,11 +3,47 @@
  */
 
 export interface User {
-  displayName: string | null
-  email: string | null
-  uid: string
+  displayName?: string | null
+  email?: string | null
+  uid?: string
   photoURL?: string | null
   emailVerified?: boolean
+  [key: string]: unknown
+}
+export interface DistinguishedName {
+  commonName: string | null
+  organizationName: string | null
+  organizationalUnitName: string | null
+  localityName: string | null
+  stateOrProvinceName: string | null
+  countryName: string
+}
+
+export interface SubjectDN {
+  [key: string]: string
+}
+
+export interface SubjectItem {
+  name: string
+  value: string
+}
+
+export interface Algorithm {
+  text: string
+  value: string
+}
+
+export interface HashParams {
+  input: string | File
+  alg: string
+  isText: boolean
+  isHmac: boolean
+  hmacKey: string
+}
+
+export interface KeyPairData {
+  id: string
+  data: unknown
 }
 
 export interface HashResult {
@@ -36,6 +72,19 @@ export interface Country {
   name: string
   code: string
   flag?: string
+}
+
+export interface HashInputData {
+  input: string
+  isText: boolean
+}
+
+export interface CalculateParams {
+  alg: string
+  input: string | File
+  isText: boolean
+  isHmac: boolean
+  hmacKey: string
 }
 
 export interface NavigationItem {

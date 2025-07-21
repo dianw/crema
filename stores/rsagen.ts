@@ -1,10 +1,7 @@
 import { defineStore } from 'pinia'
 import { pki } from 'node-forge'
+import type { KeyPairData } from '~/types'
 
-interface KeyPairData {
-  id: string
-  data: unknown
-}
 
 export const useRsagenStore = defineStore('rsagen', () => {
   const keySize = ref<number>(2048)

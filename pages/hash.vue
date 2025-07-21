@@ -8,7 +8,7 @@
           id="algorithm"
           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           :value="alg"
-          @change="(e) => { const target = e.target as HTMLSelectElement; setHashAlg(target.value); calculateHash({ input, alg: target.value, isText: true }) }"
+          @change="(e) => { const target = e.target as HTMLSelectElement; setHashAlg(target.value); calculateHash({ input, alg: target.value, isText: true, isHmac, hmacKey }) }"
         >
           <option v-for="option in algs" :key="option.value" :value="option.value">
             {{ option.text }}
@@ -65,14 +65,14 @@
             :value="input"
             placeholder="Insert text here"
             rows="5"
-            @input="(e) => { const target = e.target as HTMLTextAreaElement; calculateHash({ input: target.value, alg, isText: true }) }"
+            @input="(e) => { const target = e.target as HTMLTextAreaElement; calculateHash({ input: target.value, alg, isText: true, isHmac, hmacKey }) }"
           />
         </div>
         <div v-if="activeTab === 'file'">
           <input
             type="file"
             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-            @change="(e) => { const target = e.target as HTMLInputElement; if (target.files && target.files[0]) calculateHash({ input: target.files[0], alg, isText: false }) }"
+            @change="(e) => { const target = e.target as HTMLInputElement; if (target.files && target.files[0]) calculateHash({ input: target.files[0], alg, isText: false, isHmac, hmacKey }) }"
           >
         </div>
       </div>
@@ -93,18 +93,7 @@
 </template>
 
 <script setup lang="ts">
-interface Algorithm {
-  text: string
-  value: string
-}
-
-interface HashParams {
-  input: string | File
-  alg: string
-  isText: boolean,
-  isHmac: boolean,
-  hmacKey: string
-}
+import type { HashParams, Algorithm } from '~/types'
 
 const hashStore = useHashStore()
 
