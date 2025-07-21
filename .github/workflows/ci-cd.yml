@@ -73,16 +73,13 @@ jobs:
     needs: build
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
           name: docker-artifacts
-          path: ./
-      - name: Move artifacts to root
+          path: docker-artifacts
+      - name: List generated files
         run: |
-          mv docker-artifacts/* ./
-          ls -la
           echo "Contents of .output directory:"
           ls -la .output/
       - name: Set up Docker Buildx
