@@ -50,7 +50,7 @@ jobs:
         with:
           name: build-files
           path: |
-            .output/
+            .output/**/*
             Dockerfile
             package*.json
           retention-days: 1
