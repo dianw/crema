@@ -50,7 +50,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           mkdir -p docker-artifacts
-          cp -r .output docker-artifacts/.output
+          cp -r .output docker-artifacts/output
           cp Dockerfile docker-artifacts/
           cp package*.json docker-artifacts/
       - name: Upload build artifacts for Docker
@@ -80,7 +80,9 @@ jobs:
           path: docker-artifacts
       - name: List generated files
         run: |
-          echo "Contents of .output directory:"
+          mv ./docker-artifacts/* ./
+          mv ./output ./.output
+          echo "Contents of current directory:"
           ls -la .
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
