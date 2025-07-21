@@ -39,6 +39,20 @@ jobs:
         run: npm run generate
       - name: Generate static site with PUBLIC_PATH
         run: PUBLIC_PATH=${{ vars.PUBLIC_PATH }} npm run generate
+      - name: List generated files
+        run: |
+          echo "Contents of .output directory:"
+          ls -la .output/ || echo ".output directory not found"
+          if [ -d ".output" ]; then
+            find .output -type f | head -20
+          fi
+      - name: Prepare Docker artifacts
+        if: github.ref == 'refs/heads/main'
+        run: |
+          mkdir -p docker-artifacts
+          cp -r .output docker-artifacts/
+          cp Dockerfile docker-artifacts/
+          cp package*.json docker-artifacts/
       - name: Upload artifact for GitHub Pages
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
@@ -49,10 +63,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-files
-          path: |
-            .output/**/*
-            Dockerfile
-            package*.json
+          path: docker-artifacts
           retention-days: 1
 
   # Docker build and push job
@@ -66,7 +77,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-files
-          path: .
+          path: ./
+      - name: Move artifacts to root
+        run: |
+          mv docker-artifacts/* ./
+          ls -la
+          echo "Contents of .output directory:"
+          ls -la .output/
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Log in to Docker Hub
