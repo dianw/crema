@@ -25,9 +25,9 @@ const nav = [
     icon: 'fa fa-calculator'
   },
   {
-    name: 'RSA KeyGen',
-    to: { name: 'public-key-infrastructure-rsa-keygen' },
-    icon: 'fa fa-shield'
+    name: 'Key-Pair Gen',
+    to: { name: 'keypairgen' },
+    icon: 'fa fa-key'
   },
   {
     name: 'Cert Signing Request',
@@ -35,6 +35,8 @@ const nav = [
     icon: 'fa fa-id-card'
   }
 ]
+
+provide('navItems', nav)
 
 onMounted(() => {
   authStore.isLoggedIn()

@@ -43,7 +43,14 @@ export interface HashParams {
 
 export interface KeyPairData {
   id: string
-  data: unknown
+  data: {
+    name: string
+    algorithm?: string
+    createdDate?: string
+    privateKeyData?: string
+    publicKeyData?: string
+    [key: string]: unknown
+  }
 }
 
 export interface HashResult {
