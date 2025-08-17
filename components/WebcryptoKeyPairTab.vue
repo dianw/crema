@@ -1,11 +1,11 @@
 <template>
   <div class="font-mono">
     <div class="border border-gray-200 rounded-lg">
-      <div class="flex border-b border-gray-200">
+      <div class="flex border-b border-gray-200 overflow-x-auto scrollbar-hide">
         <button
           v-for="tab in tabs"
           :key="tab.id"
-          class="px-4 py-2 text-sm font-medium border-b-2 transition-colors"
+          class="px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0"
           :class="activeTab === tab.id ? 'border-blue-500 text-blue-600 bg-blue-50' : 'border-transparent text-gray-500 hover:text-gray-700'"
           @click="activeTab = tab.id"
         >
@@ -28,6 +28,22 @@
           <textarea
             :value="publicKeyPem"
             placeholder="Public Key Output"
+            :rows="rowSize"
+            readonly
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 text-xs"
+          />
+        </div>
+
+        <div v-if="activeTab === 'ssh'" class="space-y-2">
+          <input
+            :value="publicKeyFingerprint"
+            placeholder="Public Key Fingerprint"
+            readonly
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 text-xs"
+          >
+          <textarea
+            :value="publicKeySSH"
+            placeholder="SSH Public Key Output"
             :rows="rowSize"
             readonly
             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 text-xs"
@@ -131,6 +147,8 @@ const saved = ref<boolean>(false)
 const password = ref<string | null>(null)
 const privateKeyPem = ref<string | null>(null)
 const publicKeyPem = ref<string | null>(null)
+const publicKeySSH = ref<string | null>(null)
+const publicKeyFingerprint = ref<string | null>(null)
 
 const nameInput: Ref<HTMLInputElement | null> = ref(null)
 const passwordInput: Ref<HTMLInputElement | null> = ref(null)
@@ -162,6 +180,7 @@ const tabs = computed((): Tab[] => {
   const baseTabs: Tab[] = [
     { id: 'private', title: 'Private Key' },
     { id: 'public', title: 'Public Key' },
+    { id: 'ssh', title: 'SSH Public Key' },
     { id: 'info', title: 'Key Info' }
   ]
 
@@ -187,16 +206,22 @@ const loadKeyPair = async (kp: CryptoKeyPair | null): Promise<void> => {
   if (!kp) {
     privateKeyPem.value = null
     publicKeyPem.value = null
+    publicKeySSH.value = null
+    publicKeyFingerprint.value = null
     return
   }
 
   try {
     privateKeyPem.value = await keypairgenStore.getPrivateKeyPem()
     publicKeyPem.value = await keypairgenStore.getPublicKeyPem()
+    publicKeySSH.value = await keypairgenStore.getPublicKeyOpenSSH()
+    publicKeyFingerprint.value = await keypairgenStore.getPublicKeyFingerprint()
   } catch (error) {
     console.error('Error loading key pair:', error)
     privateKeyPem.value = null
     publicKeyPem.value = null
+    publicKeySSH.value = null
+    publicKeyFingerprint.value = null
   }
 }
 

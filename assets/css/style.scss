@@ -10,6 +10,18 @@ body {
   font-family: system-ui, -apple-system, sans-serif;
 }
 
+// Scrollbar utilities
+.scrollbar-hide {
+  /* IE and Edge */
+  -ms-overflow-style: none;
+  /* Firefox */
+  scrollbar-width: none;
+  /* Safari and Chrome */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 // Sidebar styles
 .sidebar {
   transition: all 0.3s ease-in-out;

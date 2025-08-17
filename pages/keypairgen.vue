@@ -107,12 +107,12 @@ const keyPairs = computed(() => keypairgenStore.keyPairs)
 
 const handleAlgorithmChange = (event: Event): void => {
   const target = event.target as HTMLSelectElement
-  keypairgenStore.setAlgorithm(target.value)
+  keypairgenStore.setSelectedAlgorithm(target.value)
 }
 
 const handleKeySizeChange = (event: Event): void => {
   const target = event.target as HTMLSelectElement
-  keypairgenStore.setKeySize(Number(target.value))
+  keypairgenStore.setSelectedKeySize(Number(target.value))
 }
 
 const handleCurveChange = (event: Event): void => {
