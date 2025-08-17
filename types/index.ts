@@ -57,7 +57,8 @@ export interface HashResult {
   algorithm: string
   input: string
   isText: boolean
-  output: string
+  outputHex: string
+  outputBase64: string
   digest?: unknown
 }
 

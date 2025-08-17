@@ -78,15 +78,33 @@
       </div>
 
       <div>
-        <label for="output" class="block text-sm font-medium text-gray-700 mb-2">Computed Hash</label>
-        <textarea
-          id="output"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 font-mono"
-          :value="outputHex"
-          placeholder="Hash Output"
-          rows="5"
-          readonly
-        />
+        <label class="block text-sm font-medium text-gray-700 mb-2">Computed Hash</label>
+
+        <!-- Hex Output -->
+        <div class="mb-4">
+          <label for="output-hex" class="block text-xs font-medium text-gray-600 mb-1">Hexadecimal</label>
+          <textarea
+            id="output-hex"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 font-mono text-sm"
+            :value="hashResult?.outputHex"
+            placeholder="Hex output will appear here..."
+            rows="2"
+            readonly
+          />
+        </div>
+
+        <!-- Base64 Output -->
+        <div>
+          <label for="output-base64" class="block text-xs font-medium text-gray-600 mb-1">Base64</label>
+          <textarea
+            id="output-base64"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 font-mono text-sm"
+            :value="hashResult?.outputBase64"
+            placeholder="Base64 output will appear here..."
+            rows="2"
+            readonly
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -103,13 +121,13 @@ const hmacKey = ref<string>('')
 
 const algs = computed((): Algorithm[] => {
   return hashStore.algs.map(alg => ({
-    text: alg.toUpperCase(),
+    text: alg,
     value: alg
   }))
 })
 const alg = computed(() => hashStore.alg)
 const input = computed(() => hashStore.input)
-const outputHex = computed(() => hashStore.outputHex)
+const hashResult = computed(() => hashStore.hashResult)
 
 const setHashAlg = (algorithm: string): void => {
   hashStore.setAlg(algorithm)
