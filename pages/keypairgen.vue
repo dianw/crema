@@ -46,7 +46,19 @@
               {{ generating ? 'Generating...' : 'Generate Key Pair' }}
             </button>
           </div>
-          <webcrypto-key-pair-tab :key-pair="keyPair" :algorithm="selectedAlgorithm" @save="saveKeyPair"/>
+          <webcrypto-key-pair-tab
+            :key-pair="keyPair"
+            :algorithm="selectedAlgorithm"
+            :selected-pkcs-format="selectedPkcsFormat"
+            :pkcs-formats="pkcsFormats"
+            :private-key-pem-value="privateKeyPemValue"
+            :public-key-pem-value="publicKeyPemValue"
+            :public-key-ssh-value="publicKeySSHValue"
+            :public-key-fingerprint-value="publicKeyFingerprintValue"
+            @save="saveKeyPair"
+            @update:selected-pkcs-format="handlePkcsFormatChange"
+            @load-key-pair="handleLoadKeyPair"
+          />
         </div>
         <div>
           <div class="bg-white border border-gray-200 rounded-lg">
@@ -54,9 +66,6 @@
               <h4 class="text-lg font-semibold text-gray-900">Saved Key-Pairs</h4>
             </div>
             <div class="p-4">
-              <div class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded mb-4">
-                <em>Work-in-progress</em>
-              </div>
               <div class="space-y-3">
                 <div v-for="kp in keyPairs" :key="kp.id" class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                   <div>
@@ -65,11 +74,18 @@
                   </div>
                   <div class="flex space-x-2">
                     <button
-                      @click="downloadKeyPair(kp)"
+                      @click="downloadPrivateKey(kp)"
                       class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors"
                       title="Download Private Key"
                     >
-                      <i class="fa fa-download"/>
+                      <i class="fa fa-key"/> Private
+                    </button>
+                    <button
+                      @click="downloadPublicKey(kp)"
+                      class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors"
+                      title="Download Public Key"
+                    >
+                      <i class="fa fa-key"/> Public
                     </button>
                     <button
                       class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors"
@@ -95,6 +111,10 @@ import { useKeypairgenStore } from '~/stores/keypairgen'
 const keypairgenStore = useKeypairgenStore()
 
 const generating = ref<boolean>(false)
+const privateKeyPemValue = ref<string | null>(null)
+const publicKeyPemValue = ref<string | null>(null)
+const publicKeySSHValue = ref<string | null>(null)
+const publicKeyFingerprintValue = ref<string | null>(null)
 
 const selectedAlgorithm = computed(() => keypairgenStore.selectedAlgorithm)
 const algorithms = computed(() => keypairgenStore.algorithms)
@@ -102,6 +122,8 @@ const selectedKeySize = computed(() => keypairgenStore.selectedKeySize)
 const keySizes = computed(() => keypairgenStore.keySizes)
 const selectedCurve = computed(() => keypairgenStore.selectedCurve)
 const curves = computed(() => keypairgenStore.curves)
+const selectedPkcsFormat = computed(() => keypairgenStore.selectedPkcsFormat)
+const pkcsFormats = computed(() => keypairgenStore.pkcsFormats)
 const keyPair = computed(() => keypairgenStore.keyPair)
 const keyPairs = computed(() => keypairgenStore.keyPairs)
 
@@ -137,23 +159,69 @@ const generate = async (): Promise<void> => {
   }
 }
 
-const saveKeyPair = (name: string, password: string, privateKey: string, publicKey: string): void => {
-  keypairgenStore.save({ name, password, privateKey, publicKey })
+const handlePkcsFormatChange = (format: string): void => {
+  keypairgenStore.setSelectedPkcsFormat(format)
+}
+
+const handleLoadKeyPair = async (kp: CryptoKeyPair | null): Promise<void> => {
+  if (!kp) {
+    privateKeyPemValue.value = null
+    publicKeyPemValue.value = null
+    publicKeySSHValue.value = null
+    publicKeyFingerprintValue.value = null
+    return
+  }
+
+  // Set the current key pair in the store temporarily for export
+  keypairgenStore.setKeyPair(kp)
+
+  try {
+    privateKeyPemValue.value = await keypairgenStore.getPrivateKeyPem()
+    publicKeyPemValue.value = await keypairgenStore.getPublicKeyPem()
+    publicKeySSHValue.value = await keypairgenStore.getPublicKeyOpenSSH()
+    publicKeyFingerprintValue.value = await keypairgenStore.getPublicKeyFingerprint()
+  } catch (error) {
+    console.error('Error loading key pair:', error)
+    privateKeyPemValue.value = null
+    publicKeyPemValue.value = null
+    publicKeySSHValue.value = null
+    publicKeyFingerprintValue.value = null
+  }
+}
+
+const saveKeyPair = (name: string, password: string, keyPair: CryptoKeyPair): void => {
+  keypairgenStore.save({ name, password, keyPair })
 }
 
 const keypairgenDelete = (id: string): void => {
   keypairgenStore.delete(id)
 }
 
-const downloadKeyPair = (kp: any): void => {
+const downloadPrivateKey = (kp: any): void => {
   if (kp.data.privateKeyData) {
-    const privateKeyPem = atob(kp.data.privateKeyData)
+    const privateKeyPem = kp.data.privateKeyData
     const blob = new Blob([privateKeyPem], { type: 'application/x-pem-file' })
     const url = URL.createObjectURL(blob)
 
     const a = document.createElement('a')
     a.href = url
     a.download = `${kp.data.name}_private.pem`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+}
+
+const downloadPublicKey = (kp: any): void => {
+  if (kp.data.publicKeyData) {
+    const publicKeyPem = kp.data.publicKeyData
+    const blob = new Blob([publicKeyPem], { type: 'application/x-pem-file' })
+    const url = URL.createObjectURL(blob)
+
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${kp.data.name}_public.pem`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -172,5 +240,19 @@ const formatDate = (dateString?: string): string => {
 
 onMounted(() => {
   keypairgenStore.fetch()
+})
+
+// Watch for key pair changes and load the key data
+watch(keyPair, (newKeyPair) => {
+  if (newKeyPair) {
+    handleLoadKeyPair(newKeyPair as CryptoKeyPair)
+  }
+})
+
+// Watch for PKCS format changes
+watch(selectedPkcsFormat, async () => {
+  if (keyPair.value) {
+    await handleLoadKeyPair(keyPair.value as CryptoKeyPair)
+  }
 })
 </script>

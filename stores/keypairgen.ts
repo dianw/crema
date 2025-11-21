@@ -270,40 +270,52 @@ export const useKeypairgenStore = defineStore('keypairgen', () => {
     }
   }
 
-  const exportKeyToPem = async (key: CryptoKey, type: 'private' | 'public'): Promise<string> => {
-    let format: KeyFormat
+  const exportKeyToPem = async (key: CryptoKey | ArrayBuffer, type: 'private' | 'public', isEncrypted: boolean = false): Promise<string> => {
     let pemHeader: string
     let pemFooter: string
+    let exportedAsBase64: string
 
-    if (type === 'public') {
-      format = 'spki'
-      pemHeader = '-----BEGIN PUBLIC KEY-----'
-      pemFooter = '-----END PUBLIC KEY-----'
-    } else {
-      // Private key format selection
-      const algorithm = key.algorithm as any
-      const isRSA = algorithm.name === 'RSA-PSS' || algorithm.name === 'RSASSA-PKCS1-v1_5' || algorithm.name === 'RSA-OAEP'
+    // Handle encrypted wrapped key (ArrayBuffer)
+    if (isEncrypted && key instanceof ArrayBuffer) {
+      exportedAsBase64 = btoa(String.fromCharCode(...new Uint8Array(key)))
+      pemHeader = '-----BEGIN ENCRYPTED PRIVATE KEY-----'
+      pemFooter = '-----END ENCRYPTED PRIVATE KEY-----'
+    } else if (key instanceof CryptoKey) {
+      // Handle regular CryptoKey export
+      let format: KeyFormat
 
-      if (selectedPkcsFormat.value === 'pkcs1' && isRSA) {
-        // PKCS#1 is only supported for RSA keys
-        // We need to export as PKCS#8 first, then convert to PKCS#1
-        const pkcs8 = await window.crypto.subtle.exportKey('pkcs8', key)
-        const pkcs1 = convertPkcs8ToPkcs1(new Uint8Array(pkcs8))
-        const exportedAsBase64 = btoa(String.fromCharCode(...pkcs1))
-        const pemBody = exportedAsBase64.match(/.{1,64}/g)?.join('\n') || ''
-        pemHeader = '-----BEGIN RSA PRIVATE KEY-----'
-        pemFooter = '-----END RSA PRIVATE KEY-----'
-        return `${pemHeader}\n${pemBody}\n${pemFooter}`
+      if (type === 'public') {
+        format = 'spki'
+        pemHeader = '-----BEGIN PUBLIC KEY-----'
+        pemFooter = '-----END PUBLIC KEY-----'
       } else {
-        // Use PKCS#8 for all keys (or if non-RSA with pkcs1 selected)
-        format = 'pkcs8'
-        pemHeader = '-----BEGIN PRIVATE KEY-----'
-        pemFooter = '-----END PRIVATE KEY-----'
-      }
-    }
+        // Private key format selection
+        const algorithm = key.algorithm as any
+        const isRSA = algorithm.name === 'RSA-PSS' || algorithm.name === 'RSASSA-PKCS1-v1_5' || algorithm.name === 'RSA-OAEP'
 
-    const exported = await window.crypto.subtle.exportKey(format, key)
-    const exportedAsBase64 = btoa(String.fromCharCode(...new Uint8Array(exported)))
+        if (selectedPkcsFormat.value === 'pkcs1' && isRSA) {
+          // PKCS#1 is only supported for RSA keys
+          // We need to export as PKCS#8 first, then convert to PKCS#1
+          const pkcs8 = await window.crypto.subtle.exportKey('pkcs8', key)
+          const pkcs1 = convertPkcs8ToPkcs1(new Uint8Array(pkcs8))
+          exportedAsBase64 = btoa(String.fromCharCode(...pkcs1))
+          pemHeader = '-----BEGIN RSA PRIVATE KEY-----'
+          pemFooter = '-----END RSA PRIVATE KEY-----'
+          const pemBody = exportedAsBase64.match(/.{1,64}/g)?.join('\n') || ''
+          return `${pemHeader}\n${pemBody}\n${pemFooter}`
+        } else {
+          // Use PKCS#8 for all keys (or if non-RSA with pkcs1 selected)
+          format = 'pkcs8'
+          pemHeader = '-----BEGIN PRIVATE KEY-----'
+          pemFooter = '-----END PRIVATE KEY-----'
+        }
+      }
+
+      const exported = await window.crypto.subtle.exportKey(format, key)
+      exportedAsBase64 = btoa(String.fromCharCode(...new Uint8Array(exported)))
+    } else {
+      throw new Error('Invalid key type')
+    }
 
     // Split the base64 string into 64-character lines
     const pemBody = exportedAsBase64.match(/.{1,64}/g)?.join('\n') || ''
@@ -400,14 +412,63 @@ export const useKeypairgenStore = defineStore('keypairgen', () => {
     }
   }
 
-  const save = ({ name, password, privateKey, publicKey }: { name: string, password: string, privateKey: string, publicKey: string }) => {
-    // For simplicity, we'll store the password-protected PEM directly
-    // In a real application, you'd want to properly encrypt the private key
-    let processedPrivateKey = privateKey
+  const save = async ({ name, password, keyPair: keyPairToSave }: { name: string, password: string, keyPair: CryptoKeyPair }) => {
+    // Export the keys
+    const publicKey = await exportKeyToPem(keyPairToSave.publicKey, 'public')
+    let processedPrivateKey = await exportKeyToPem(keyPairToSave.privateKey, 'private')
+    let encryptionMetadata: { salt: string, iv: string } | null = null
 
     if (password) {
-      // Add a simple password protection marker (this is not secure encryption)
-      processedPrivateKey = `# Password Protected (${password})\n${privateKey}`
+      try {
+        // Derive a key from the password using PBKDF2
+        const salt = crypto.getRandomValues(new Uint8Array(16))
+        const passwordKey = await crypto.subtle.importKey(
+          'raw',
+          new TextEncoder().encode(password),
+          'PBKDF2',
+          false,
+          ['deriveKey']
+        )
+
+        const wrappingKey = await crypto.subtle.deriveKey(
+          {
+            name: 'PBKDF2',
+            salt: salt,
+            iterations: 100000,
+            hash: 'SHA-256'
+          },
+          passwordKey,
+          { name: 'AES-GCM', length: 256 },
+          false,
+          ['wrapKey', 'unwrapKey']
+        )
+
+        // Generate IV for AES-GCM
+        const iv = crypto.getRandomValues(new Uint8Array(12))
+
+        // Wrap the private key using wrapKey
+        const wrappedKey = await crypto.subtle.wrapKey(
+          'pkcs8',
+          keyPairToSave.privateKey,
+          wrappingKey,
+          {
+            name: 'AES-GCM',
+            iv: iv
+          }
+        )
+
+        // Format wrapped key as encrypted PEM using exportKeyToPem
+        processedPrivateKey = await exportKeyToPem(wrappedKey, 'private', true)
+
+        // Store salt and IV for decryption later
+        encryptionMetadata = {
+          salt: btoa(String.fromCharCode(...salt)),
+          iv: btoa(String.fromCharCode(...iv))
+        }
+      } catch (error) {
+        console.error('Error wrapping private key:', error)
+        throw new Error('Failed to encrypt private key')
+      }
     }
 
     // Create a new key pair entry
@@ -417,9 +478,11 @@ export const useKeypairgenStore = defineStore('keypairgen', () => {
         name,
         algorithm: selectedAlgorithm.value,
         createdDate: new Date().toISOString(),
-        // Store keys as base64 encoded data for download
-        privateKeyData: btoa(processedPrivateKey),
-        publicKeyData: btoa(publicKey)
+        // Store keys directly in PEM format (already text-safe)
+        privateKeyData: processedPrivateKey,
+        publicKeyData: publicKey,
+        encrypted: !!encryptionMetadata,
+        ...(encryptionMetadata && { encryptionMetadata })
       }
     }
 

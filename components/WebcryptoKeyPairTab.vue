@@ -19,13 +19,13 @@
             <label for="pkcs-format" class="block text-sm font-medium text-gray-700 mb-2">PEM Format</label>
             <select
               id="pkcs-format"
-              :value="keypairgenStore.selectedPkcsFormat"
+              :value="selectedPkcsFormat"
               :disabled="!isRSAAlgorithm || privateKeyPem === null"
               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:text-gray-500"
               @change="onPkcsFormatChange"
             >
               <option
-                v-for="format in keypairgenStore.pkcsFormats"
+                v-for="format in pkcsFormats"
                 :key="format.value"
                 :value="format.value"
               >
@@ -135,41 +135,61 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import type { Ref } from 'vue'
-import { useKeypairgenStore } from '~/stores/keypairgen'
 
 interface Tab {
   id: string
   title: string
 }
 
+interface PkcsFormat {
+  readonly name: string
+  readonly value: string
+}
+
 interface Props {
   rowSize?: number
-  keyPair?: CryptoKeyPair | null
+  keyPair?: CryptoKeyPair | null | any
   algorithm?: string
+  selectedPkcsFormat?: string
+  pkcsFormats?: readonly PkcsFormat[] | PkcsFormat[]
+  privateKeyPemValue?: string | null
+  publicKeyPemValue?: string | null
+  publicKeySSHValue?: string | null
+  publicKeyFingerprintValue?: string | null
 }
 
 interface Emits {
-  save: [name: string, password: string, privateKeyPem: string, publicKeyPem: string]
+  save: [name: string, password: string, keyPair: CryptoKeyPair]
+  'update:selectedPkcsFormat': [format: string]
+  'load-key-pair': [keyPair: CryptoKeyPair | null]
 }
 
 const props = withDefaults(defineProps<Props>(), {
   rowSize: 15,
   keyPair: null,
-  algorithm: 'RSA-PSS'
+  algorithm: 'RSA-PSS',
+  selectedPkcsFormat: 'pkcs8',
+  pkcsFormats: () => [
+    { name: 'PKCS#8', value: 'pkcs8' },
+    { name: 'PKCS#1', value: 'pkcs1' }
+  ],
+  privateKeyPemValue: null,
+  publicKeyPemValue: null,
+  publicKeySSHValue: null,
+  publicKeyFingerprintValue: null
 })
 
 const emit = defineEmits<Emits>()
-
-const keypairgenStore = useKeypairgenStore()
 
 const activeTab = ref<string>('private')
 const name = ref<string | null>(null)
 const saved = ref<boolean>(false)
 const password = ref<string | null>(null)
-const privateKeyPem = ref<string | null>(null)
-const publicKeyPem = ref<string | null>(null)
-const publicKeySSH = ref<string | null>(null)
-const publicKeyFingerprint = ref<string | null>(null)
+
+const privateKeyPem = computed(() => props.privateKeyPemValue)
+const publicKeyPem = computed(() => props.publicKeyPemValue)
+const publicKeySSH = computed(() => props.publicKeySSHValue)
+const publicKeyFingerprint = computed(() => props.publicKeyFingerprintValue)
 
 const nameInput: Ref<HTMLInputElement | null> = ref(null)
 const passwordInput: Ref<HTMLInputElement | null> = ref(null)
@@ -180,13 +200,9 @@ const isRSAAlgorithm = computed(() => {
          props.algorithm === 'RSA-OAEP'
 })
 
-const onPkcsFormatChange = async (event: Event): Promise<void> => {
+const onPkcsFormatChange = (event: Event): void => {
   const target = event.target as HTMLSelectElement
-  keypairgenStore.setSelectedPkcsFormat(target.value)
-  // Reload the private key with the new format
-  if (props.keyPair) {
-    await loadKeyPair(props.keyPair)
-  }
+  emit('update:selectedPkcsFormat', target.value)
 }
 
 const keyInfo = computed(() => {
@@ -232,33 +248,14 @@ const save = (): void => {
     nameInput.value?.focus()
     return
   }
-  if (name.value && password.value && privateKeyPem.value && publicKeyPem.value) {
-    emit('save', name.value, password.value, privateKeyPem.value, publicKeyPem.value)
+  if (name.value && password.value && props.keyPair) {
+    emit('save', name.value, password.value, props.keyPair)
     saved.value = true
   }
 }
 
-const loadKeyPair = async (kp: CryptoKeyPair | null): Promise<void> => {
-  if (!kp) {
-    privateKeyPem.value = null
-    publicKeyPem.value = null
-    publicKeySSH.value = null
-    publicKeyFingerprint.value = null
-    return
-  }
-
-  try {
-    privateKeyPem.value = await keypairgenStore.getPrivateKeyPem()
-    publicKeyPem.value = await keypairgenStore.getPublicKeyPem()
-    publicKeySSH.value = await keypairgenStore.getPublicKeyOpenSSH()
-    publicKeyFingerprint.value = await keypairgenStore.getPublicKeyFingerprint()
-  } catch (error) {
-    console.error('Error loading key pair:', error)
-    privateKeyPem.value = null
-    publicKeyPem.value = null
-    publicKeySSH.value = null
-    publicKeyFingerprint.value = null
-  }
+const loadKeyPair = (kp: CryptoKeyPair | null): void => {
+  emit('load-key-pair', kp)
 }
 
 onMounted(() => {
@@ -268,11 +265,5 @@ onMounted(() => {
 watch(() => props.keyPair, (kp: CryptoKeyPair | null) => {
   saved.value = false
   loadKeyPair(kp)
-})
-
-watch(() => keypairgenStore.selectedPkcsFormat, async () => {
-  if (props.keyPair) {
-    await loadKeyPair(props.keyPair)
-  }
 })
 </script>
