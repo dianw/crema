@@ -15,6 +15,27 @@
 
       <div class="p-4">
         <div v-if="activeTab === 'private'" class="space-y-2">
+          <div v-if="isRSAAlgorithm">
+            <label for="pkcs-format" class="block text-sm font-medium text-gray-700 mb-2">PEM Format</label>
+            <select
+              id="pkcs-format"
+              :value="keypairgenStore.selectedPkcsFormat"
+              :disabled="!isRSAAlgorithm || privateKeyPem === null"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:text-gray-500"
+              @change="onPkcsFormatChange"
+            >
+              <option
+                v-for="format in keypairgenStore.pkcsFormats"
+                :key="format.value"
+                :value="format.value"
+              >
+                {{ format.name }}
+              </option>
+            </select>
+            <p v-if="!isRSAAlgorithm" class="mt-1 text-xs text-gray-500">
+              PKCS#1 is only available for RSA keys. Non-RSA keys use PKCS#8.
+            </p>
+          </div>
           <textarea
             :value="privateKeyPem"
             placeholder="Private Key Output"
@@ -153,6 +174,21 @@ const publicKeyFingerprint = ref<string | null>(null)
 const nameInput: Ref<HTMLInputElement | null> = ref(null)
 const passwordInput: Ref<HTMLInputElement | null> = ref(null)
 
+const isRSAAlgorithm = computed(() => {
+  return props.algorithm === 'RSA-PSS' ||
+         props.algorithm === 'RSASSA-PKCS1-v1_5' ||
+         props.algorithm === 'RSA-OAEP'
+})
+
+const onPkcsFormatChange = async (event: Event): Promise<void> => {
+  const target = event.target as HTMLSelectElement
+  keypairgenStore.setSelectedPkcsFormat(target.value)
+  // Reload the private key with the new format
+  if (props.keyPair) {
+    await loadKeyPair(props.keyPair)
+  }
+}
+
 const keyInfo = computed(() => {
   if (!props.keyPair) {
     return { extractable: false }
@@ -232,5 +268,11 @@ onMounted(() => {
 watch(() => props.keyPair, (kp: CryptoKeyPair | null) => {
   saved.value = false
   loadKeyPair(kp)
+})
+
+watch(() => keypairgenStore.selectedPkcsFormat, async () => {
+  if (props.keyPair) {
+    await loadKeyPair(props.keyPair)
+  }
 })
 </script>

@@ -143,12 +143,23 @@ export const useKeypairgenStore = defineStore('keypairgen', () => {
   const selectedKeySize = ref<number>(2048)
   const keySizes = ref<number[]>([1024, 2048, 4096])
   const selectedAlgorithm = ref<string>('RSA-PSS')
-  const algorithms = ref<string[]>(['RSA-PSS', 'ECDSA', 'Ed25519'])
+  const algorithms = ref<Array<{ name: string, value: string }>>([
+    { name: 'RSA-PSS (signature)', value: 'RSA-PSS' },
+    { name: 'RSA-OAEP (encryption)', value: 'RSA-OAEP' },
+    { name: 'RSASSA-PKCS1-v1_5 (signature, legacy)', value: 'RSASSA-PKCS1-v1_5' },
+    { name: 'ECDSA (signature)', value: 'ECDSA' },
+    { name: 'Ed25519 (signature)', value: 'Ed25519' }
+  ])
   const selectedCurve = ref<string>('P-256')
   const curves = ref([
     { name: 'P-256 (secp256r1)', value: 'P-256' },
     { name: 'P-384 (secp384r1)', value: 'P-384' },
     { name: 'P-521 (secp521r1)', value: 'P-521' }
+  ])
+  const selectedPkcsFormat = ref<string>('pkcs8')
+  const pkcsFormats = ref([
+    { name: 'PKCS#8 (modern standard)', value: 'pkcs8' },
+    { name: 'PKCS#1 (legacy RSA)', value: 'pkcs1' }
   ])
   const keyPair = ref<CryptoKeyPair | null>(null)
   const keyPairs = ref<KeyPairData[]>([])
@@ -175,6 +186,10 @@ export const useKeypairgenStore = defineStore('keypairgen', () => {
     setKeyPair(null)
   }
 
+  const setSelectedPkcsFormat = (format: string) => {
+    selectedPkcsFormat.value = format
+  }
+
   const setKeyPair = (pair: CryptoKeyPair | null) => {
     keyPair.value = pair
   }
@@ -199,6 +214,26 @@ export const useKeypairgenStore = defineStore('keypairgen', () => {
             hash: 'SHA-256'
           }
           keyUsages = ['sign', 'verify']
+          break
+
+        case 'RSASSA-PKCS1-v1_5':
+          keyGenAlgorithm = {
+            name: 'RSASSA-PKCS1-v1_5',
+            modulusLength: keySize || 2048,
+            publicExponent: new Uint8Array([1, 0, 1]), // 65537
+            hash: 'SHA-256'
+          }
+          keyUsages = ['sign', 'verify']
+          break
+
+        case 'RSA-OAEP':
+          keyGenAlgorithm = {
+            name: 'RSA-OAEP',
+            modulusLength: keySize || 2048,
+            publicExponent: new Uint8Array([1, 0, 1]), // 65537
+            hash: 'SHA-256'
+          }
+          keyUsages = ['encrypt', 'decrypt']
           break
 
         case 'ECDSA':
@@ -236,10 +271,36 @@ export const useKeypairgenStore = defineStore('keypairgen', () => {
   }
 
   const exportKeyToPem = async (key: CryptoKey, type: 'private' | 'public'): Promise<string> => {
-    // All supported algorithms use the same PEM format
-    const format: KeyFormat = type === 'private' ? 'pkcs8' : 'spki'
-    const pemHeader = type === 'private' ? '-----BEGIN PRIVATE KEY-----' : '-----BEGIN PUBLIC KEY-----'
-    const pemFooter = type === 'private' ? '-----END PRIVATE KEY-----' : '-----END PUBLIC KEY-----'
+    let format: KeyFormat
+    let pemHeader: string
+    let pemFooter: string
+
+    if (type === 'public') {
+      format = 'spki'
+      pemHeader = '-----BEGIN PUBLIC KEY-----'
+      pemFooter = '-----END PUBLIC KEY-----'
+    } else {
+      // Private key format selection
+      const algorithm = key.algorithm as any
+      const isRSA = algorithm.name === 'RSA-PSS' || algorithm.name === 'RSASSA-PKCS1-v1_5' || algorithm.name === 'RSA-OAEP'
+
+      if (selectedPkcsFormat.value === 'pkcs1' && isRSA) {
+        // PKCS#1 is only supported for RSA keys
+        // We need to export as PKCS#8 first, then convert to PKCS#1
+        const pkcs8 = await window.crypto.subtle.exportKey('pkcs8', key)
+        const pkcs1 = convertPkcs8ToPkcs1(new Uint8Array(pkcs8))
+        const exportedAsBase64 = btoa(String.fromCharCode(...pkcs1))
+        const pemBody = exportedAsBase64.match(/.{1,64}/g)?.join('\n') || ''
+        pemHeader = '-----BEGIN RSA PRIVATE KEY-----'
+        pemFooter = '-----END RSA PRIVATE KEY-----'
+        return `${pemHeader}\n${pemBody}\n${pemFooter}`
+      } else {
+        // Use PKCS#8 for all keys (or if non-RSA with pkcs1 selected)
+        format = 'pkcs8'
+        pemHeader = '-----BEGIN PRIVATE KEY-----'
+        pemFooter = '-----END PRIVATE KEY-----'
+      }
+    }
 
     const exported = await window.crypto.subtle.exportKey(format, key)
     const exportedAsBase64 = btoa(String.fromCharCode(...new Uint8Array(exported)))
@@ -248,6 +309,72 @@ export const useKeypairgenStore = defineStore('keypairgen', () => {
     const pemBody = exportedAsBase64.match(/.{1,64}/g)?.join('\n') || ''
 
     return `${pemHeader}\n${pemBody}\n${pemFooter}`
+  }
+
+  // Convert PKCS#8 to PKCS#1 for RSA keys
+  const convertPkcs8ToPkcs1 = (pkcs8: Uint8Array): Uint8Array => {
+    // PKCS#8 structure: SEQUENCE { version, algorithm, privateKey }
+    // We need to extract the privateKey OCTET STRING which contains the PKCS#1 data
+
+    // Simple DER parser to extract the OCTET STRING
+    let offset = 0
+
+    // Skip SEQUENCE tag
+    if (pkcs8[offset] !== 0x30) throw new Error('Invalid PKCS#8 format')
+    offset++
+
+    // Skip length
+    const lengthByte = pkcs8[offset++]
+    if (lengthByte === undefined) throw new Error('Invalid PKCS#8 format')
+    if (lengthByte & 0x80) {
+      const lengthBytes = lengthByte & 0x7f
+      offset += lengthBytes
+    }
+
+    // Skip version INTEGER
+    if (pkcs8[offset] !== 0x02) throw new Error('Invalid PKCS#8 format')
+    offset++
+    const versionLength = pkcs8[offset]
+    if (versionLength === undefined) throw new Error('Invalid PKCS#8 format')
+    offset += versionLength + 1
+
+    // Skip algorithm SEQUENCE
+    if (pkcs8[offset] !== 0x30) throw new Error('Invalid PKCS#8 format')
+    offset++
+    const algLengthByte = pkcs8[offset++]
+    if (algLengthByte === undefined) throw new Error('Invalid PKCS#8 format')
+    let algLength = algLengthByte
+    if (algLengthByte & 0x80) {
+      const algLengthBytes = algLengthByte & 0x7f
+      algLength = 0
+      for (let i = 0; i < algLengthBytes; i++) {
+        const byte = pkcs8[offset++]
+        if (byte === undefined) throw new Error('Invalid PKCS#8 format')
+        algLength = (algLength << 8) | byte
+      }
+    }
+    offset += algLength
+
+    // Now we should be at the OCTET STRING containing PKCS#1
+    if (pkcs8[offset] !== 0x04) throw new Error('Invalid PKCS#8 format')
+    offset++
+
+    // Get length of OCTET STRING
+    const octetLengthByte = pkcs8[offset++]
+    if (octetLengthByte === undefined) throw new Error('Invalid PKCS#8 format')
+    let octetLength = octetLengthByte
+    if (octetLengthByte & 0x80) {
+      const octetLengthBytes = octetLengthByte & 0x7f
+      octetLength = 0
+      for (let i = 0; i < octetLengthBytes; i++) {
+        const byte = pkcs8[offset++]
+        if (byte === undefined) throw new Error('Invalid PKCS#8 format')
+        octetLength = (octetLength << 8) | byte
+      }
+    }
+
+    // Extract the PKCS#1 data
+    return pkcs8.slice(offset, offset + octetLength)
   }
 
   const deleteKeyPair = (docId: string) => {
@@ -331,7 +458,7 @@ export const useKeypairgenStore = defineStore('keypairgen', () => {
       const publicKey = keyPair.value.publicKey
       const algorithm = publicKey.algorithm as any
 
-      if (algorithm.name === 'RSA-PSS') {
+      if (algorithm.name === 'RSA-PSS' || algorithm.name === 'RSASSA-PKCS1-v1_5' || algorithm.name === 'RSA-OAEP') {
         return await convertRSAPublicKeyToOpenSSH(publicKey)
       } else if (algorithm.name === 'ECDSA') {
         return await convertECDSAPublicKeyToOpenSSH(publicKey)
@@ -385,12 +512,15 @@ export const useKeypairgenStore = defineStore('keypairgen', () => {
     algorithms: readonly(algorithms),
     selectedCurve: readonly(selectedCurve),
     curves: readonly(curves),
+    selectedPkcsFormat: readonly(selectedPkcsFormat),
+    pkcsFormats: readonly(pkcsFormats),
     keyPair: readonly(keyPair),
     keyPairs: readonly(keyPairs),
     addKeyPair,
     setSelectedKeySize,
     setSelectedAlgorithm,
     setSelectedCurve,
+    setSelectedPkcsFormat,
     setKeyPair,
     setKeyPairs,
     delete: deleteKeyPair,

@@ -12,10 +12,10 @@
               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               @input="handleAlgorithmChange"
             >
-              <option v-for="alg in algorithms" :key="alg" :value="alg">{{ alg }}</option>
+              <option v-for="alg in algorithms" :key="alg.value" :value="alg.value">{{ alg.name }}</option>
             </select>
           </div>
-          <div v-if="selectedAlgorithm === 'RSA-PSS'" class="mb-4">
+          <div v-if="selectedAlgorithm === 'RSASSA-PKCS1-v1_5' || selectedAlgorithm === 'RSA-PSS' || selectedAlgorithm === 'RSA-OAEP'" class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-2">Key Size</label>
             <select
               :value="selectedKeySize"
@@ -123,7 +123,7 @@ const handleCurveChange = (event: Event): void => {
 const generate = async (): Promise<void> => {
   generating.value = true
   try {
-    if (selectedAlgorithm.value === 'RSA-PSS') {
+    if (selectedAlgorithm.value === 'RSASSA-PKCS1-v1_5' || selectedAlgorithm.value === 'RSA-PSS' || selectedAlgorithm.value === 'RSA-OAEP') {
       await keypairgenStore.generate(selectedAlgorithm.value, selectedKeySize.value)
     } else if (selectedAlgorithm.value === 'ECDSA') {
       // Map curve to key size for consistency
