@@ -36,7 +36,7 @@ export const useCsrStore = defineStore('csr', () => {
     const csrObj = pki.createCertificationRequest()
     csrObj.publicKey = keyPair.publicKey
     csrObj.setSubject(subject.value)
-    csrObj.sign(keyPair.privateKey as pki.MDSigner)
+    csrObj.sign(keyPair.privateKey as any)
 
     const signedCsr = {
       csr: csrObj,

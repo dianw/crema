@@ -13,11 +13,11 @@ export default defineNuxtPlugin(() => {
     messagingSenderId: '557427128749'
   }
 
-  let firebaseApp
+  let firebaseApp: import('firebase/app').FirebaseApp
   if (getApps().length === 0) {
     firebaseApp = initializeApp(config)
   } else {
-    firebaseApp = getApps()[0]
+    firebaseApp = getApps()[0]!
   }
 
   const auth = getAuth(firebaseApp)

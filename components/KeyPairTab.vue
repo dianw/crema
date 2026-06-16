@@ -160,7 +160,7 @@ const save = (): void => {
 }
 
 const loadKeyPair = (kp: KeyPair | undefined): void => {
-  if (!kp || !kp.privateKey) return
+  if (!kp || !kp.privateKey || !kp.publicKey) return
   privateKeyPem.value = pki.privateKeyToPem(kp.privateKey)
   publicKeyPem.value = pki.publicKeyToPem(kp.publicKey)
   publicKeySSH.value = ssh.publicKeyToOpenSSH(kp.publicKey)

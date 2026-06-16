@@ -16,10 +16,20 @@
       'lg:w-64': !isMinimized
     }"
   >
-    <nav class="p-4">
+    <nav class="p-4 overflow-y-auto max-h-screen">
       <ul class="space-y-2">
         <li v-for="(item, index) in navItems" :key="index">
+          <!-- Category divider -->
+          <div
+            v-if="item.isCategory"
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 pt-4 pb-2 mt-2 border-t border-gray-700 first:border-t-0 first:mt-0 first:pt-2"
+            :class="{ 'lg:hidden': isMinimized }"
+          >
+            {{ item.name }}
+          </div>
+          <!-- Normal nav item -->
           <NuxtLink
+            v-else
             :to="item.to"
             class="flex items-center space-x-3 text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg px-3 py-2 transition-colors group"
             active-class="bg-gray-700 text-white"
@@ -48,8 +58,9 @@
 <script setup lang="ts">
 interface NavItem {
   name: string
-  to: { name: string }
-  icon: string
+  to?: { name: string }
+  icon?: string
+  isCategory?: boolean
 }
 
 interface Props {

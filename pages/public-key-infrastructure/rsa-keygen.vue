@@ -37,11 +37,11 @@
               </div>
               <div class="space-y-3">
                 <div v-for="kp in keyPairs" :key="kp.id" class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                  <h6 class="text-sm font-medium text-gray-900">{{ kp.data.name }}</h6>
+                  <h6 class="text-sm font-medium text-gray-900">{{ (kp.data as Record<string, any>).name }}</h6>
                   <div class="flex space-x-2">
                     <a
-                      :download="`${kp.data.name}.pem`"
-                      :href="kp.data.storageDownloadUrl"
+                      :download="`${(kp.data as Record<string, any>).name}.pem`"
+                      :href="(kp.data as Record<string, any>).storageDownloadUrl"
                       class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors"
                     >
                       <i class="fa fa-download"/>
