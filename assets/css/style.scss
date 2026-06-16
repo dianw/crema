@@ -33,11 +33,13 @@ body {
   }
 
   // Main content adjustment for minimized sidebar
-  body.sidebar-minimized main {
+  body.sidebar-minimized main,
+  body.sidebar-minimized footer {
     margin-left: 4rem;
   }
 
-  body:not(.sidebar-minimized) main {
+  body:not(.sidebar-minimized) main,
+  body:not(.sidebar-minimized) footer {
     margin-left: 16rem; /* 256px / 16px = 16rem (w-64) */
   }
 
@@ -65,7 +67,7 @@ body {
     display: block !important;
   }
 
-  main {
+  main, footer {
     margin-left: 0 !important;
   }
 }

@@ -28,7 +28,7 @@
           target="_blank"
           class="text-gray-600 hover:text-gray-900 transition-colors"
         >
-          <i class="fa fa-github text-lg"/>
+          <i class="fab fa-github text-lg"/>
         </a>
       </div>
     </nav>
