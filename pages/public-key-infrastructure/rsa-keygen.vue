@@ -16,6 +16,17 @@
             </select>
           </div>
           <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Algorithm</label>
+            <select
+              :value="algorithm"
+              :disabled="generating"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              @input="handleAlgorithmChange"
+            >
+              <option v-for="alg in algorithms" :key="alg.value" :value="alg.value">{{ alg.label }}</option>
+            </select>
+          </div>
+          <div class="mb-4">
             <button
               :disabled="generating"
               class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg text-lg transition-colors"
@@ -24,7 +35,7 @@
               {{ generating ? 'Generating...' : 'Generate Key Pair' }}
             </button>
           </div>
-          <key-pair-tab :key-pair="keyPair" @save="saveKeyPair"/>
+          <key-pair-tab :key-pair="keyPair" :algorithm="algorithm" @save="saveKeyPair"/>
         </div>
         <div>
           <div class="bg-white border border-gray-200 rounded-lg">
@@ -65,6 +76,7 @@
 
 <script setup lang="ts">
 import KeyPairTab from '~/components/KeyPairTab.vue'
+import type { RsaAlgorithm } from '~/stores/rsagen'
 
 const rsagenStore = useRsagenStore()
 const authStore = useAuthStore()
@@ -73,12 +85,19 @@ const generating = ref<boolean>(false)
 
 const keySize = computed(() => rsagenStore.keySize)
 const keySizes = computed(() => rsagenStore.keySizes)
+const algorithm = computed(() => rsagenStore.algorithm)
+const algorithms = computed(() => rsagenStore.algorithms)
 const keyPair = computed(() => rsagenStore.keyPair)
 const keyPairs = computed(() => rsagenStore.keyPairs)
 
 const handleKeySizeChange = (event: Event): void => {
   const target = event.target as HTMLSelectElement
   rsagenStore.setKeySize(Number(target.value))
+}
+
+const handleAlgorithmChange = (event: Event): void => {
+  const target = event.target as HTMLSelectElement
+  rsagenStore.setAlgorithm(target.value as RsaAlgorithm)
 }
 
 const generate = async (): Promise<void> => {

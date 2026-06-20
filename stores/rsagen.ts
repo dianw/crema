@@ -3,9 +3,23 @@ import { pki } from 'node-forge'
 import type { KeyPairData } from '~/types'
 
 
+export type RsaAlgorithm = 'pkcs1' | 'pss' | 'oaep'
+
+export interface RsaAlgorithmOption {
+  label: string
+  value: RsaAlgorithm
+}
+
+export const RSA_ALGORITHMS: RsaAlgorithmOption[] = [
+  { label: 'PKCS#1 v1.5 (Legacy)', value: 'pkcs1' },
+  { label: 'RSA-PSS', value: 'pss' },
+  { label: 'RSA-OAEP', value: 'oaep' }
+]
+
 export const useRsagenStore = defineStore('rsagen', () => {
   const keySize = ref<number>(2048)
   const keySizes = ref<number[]>([512, 1024, 2048, 4096])
+  const algorithm = ref<RsaAlgorithm>('pkcs1')
   const keyPair = ref<unknown>(null)
   const keyPairs = ref<KeyPairData[]>([])
 
@@ -17,6 +31,10 @@ export const useRsagenStore = defineStore('rsagen', () => {
 
   const setKeySize = (size: number) => {
     keySize.value = size
+  }
+
+  const setAlgorithm = (alg: RsaAlgorithm) => {
+    algorithm.value = alg
   }
 
   const setKeyPair = (pair: unknown) => {
@@ -107,10 +125,13 @@ export const useRsagenStore = defineStore('rsagen', () => {
   return {
     keySize: readonly(keySize),
     keySizes: readonly(keySizes),
+    algorithm: readonly(algorithm),
+    algorithms: RSA_ALGORITHMS,
     keyPair: readonly(keyPair),
     keyPairs: readonly(keyPairs),
     addKeyPair,
     setKeySize,
+    setAlgorithm,
     setKeyPair,
     setKeyPairs,
     delete: deleteKeyPair,
