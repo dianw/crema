@@ -33,12 +33,43 @@ jobs:
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+
+      # Inject Cloudflare Analytics into nuxt.config.ts before the build.
+      # This modifies the file ephemerally on the CI runner — never committed to source.
+      # Nuxt then renders the script tag natively during static generation.
+      - name: Inject Cloudflare Analytics config
+        env:
+          CF_BEACON_TOKEN: ${{ secrets.CF_BEACON_TOKEN }}
+        run: |
+          cat > /tmp/inject-config.cjs << 'SCRIPT'
+          const fs = require('fs');
+          const token = process.env.CF_BEACON_TOKEN;
+          if (!token) {
+            console.log('No CF_BEACON_TOKEN, skipping config injection');
+            process.exit(0);
+          }
+          let config = fs.readFileSync('nuxt.config.ts', 'utf8');
+          const scriptBlock = [
+            '      script: [',
+            `        { defer: true, src: 'https://static.cloudflareinsights.com/beacon.min.js', 'data-cf-beacon': '{"token": "${token}"}' }`,
+            '      ]',
+          ].join('\n');
+          // Insert script array after link closing bracket, before head closing brace
+          config = config.replace(
+            /(      \],)(\n    }\n  },)/,
+            '$1\n' + scriptBlock + '$2'
+          );
+          fs.writeFileSync('nuxt.config.ts', config);
+          console.log('Injected Cloudflare Analytics script into nuxt.config.ts');
+          SCRIPT
+          node /tmp/inject-config.cjs
       - name: Build application
         run: yarn build
       - name: Generate static site
         run: yarn generate
       - name: Generate static site with PUBLIC_PATH
         run: PUBLIC_PATH=${{ vars.PUBLIC_PATH }} yarn generate
+
       - name: List generated files
         run: |
           echo "Contents of .output directory:"
