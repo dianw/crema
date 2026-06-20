@@ -52,13 +52,18 @@ jobs:
           const scriptBlock = [
             '      script: [',
             `        { defer: true, src: 'https://static.cloudflareinsights.com/beacon.min.js', 'data-cf-beacon': '{"token": "${token}"}' }`,
-            '      ]',
+            '      ],',
           ].join('\n');
           // Insert script array after link closing bracket, before head closing brace
+          const before = config;
           config = config.replace(
-            /(      \],)(\n    }\n  },)/,
-            '$1\n' + scriptBlock + '$2'
+            /(      \])(\n    }\n  },)/,
+            '$1,\n' + scriptBlock + '$2'
           );
+          if (config === before) {
+            console.log('ERROR: Regex did not match — nuxt.config.ts structure may have changed');
+            process.exit(1);
+          }
           fs.writeFileSync('nuxt.config.ts', config);
           console.log('Injected Cloudflare Analytics script into nuxt.config.ts');
           SCRIPT
