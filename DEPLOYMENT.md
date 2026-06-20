@@ -33,7 +33,7 @@ If you prefer to deploy manually:
 
 1. **Generate static files**:
    ```bash
-   npm run generate
+   yarn generate
    ```
 
 2. **Upload files**:

@@ -35,28 +35,28 @@ git clone https://github.com/dianw/crema.git
 cd crema
 
 # Install dependencies
-npm install
+yarn install
 
 # Start development server (with hot reload)
-npm run dev
+yarn dev
 
 # Build for production
-npm run build
+yarn build
 
 # Generate static site
-npm run generate
+yarn generate
 
 # Preview production build
-npm run preview
+yarn preview
 
 # Run type checking
-npm run typecheck
+yarn typecheck
 
 # Lint code
-npm run lint
+yarn lint
 
 # Clean build cache
-npm run clean
+yarn clean
 ```
 
 ## Project Structure
@@ -92,7 +92,7 @@ This project is configured for automatic deployment to GitHub Pages. The build p
 
 ```bash
 # Generate static files
-npm run generate
+yarn generate
 
 # The generated files will be in .output/public/
 # Upload these files to your static hosting provider

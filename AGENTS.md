@@ -34,7 +34,7 @@ layouts/        → default.vue with Header, Sidebar, Footer
 
 - **`ssr: false`** in `nuxt.config.ts` — this is a pure client-side SPA
 - **Hash-mode routing** (`hashMode: true`) — required for GitHub Pages hosting
-- **Static output** only — `npm run generate` produces `.output/public/`
+- **Static output** only — `yarn generate` produces `.output/public/`
 - **No server/Nitro code** — all logic runs in the browser
 - **All crypto via `node-forge`** — never introduce crypto libraries without explicit approval
 - **Firebase is client-only** (`firebase.client.ts`) — no server-side auth
@@ -92,13 +92,13 @@ export const useFeatureStore = defineStore('feature', () => {
 ## Build & Run
 
 ```bash
-npm run dev          # Dev server with HMR
-npm run build        # Production build
-npm run generate     # Static site generation → .output/public/
-npm run lint         # Run ESLint
-npm run lint:fix     # Auto-fix lint issues
-npm run typecheck    # Run TypeScript type checking
-npm run clean        # Clean build artifacts
+yarn dev          # Dev server with HMR
+yarn build        # Production build
+yarn generate     # Static site generation → .output/public/
+yarn lint         # Run ESLint
+yarn lint:fix     # Auto-fix lint issues
+yarn typecheck    # Run TypeScript type checking
+yarn clean        # Clean build artifacts
 ```
 
 ## Key Files

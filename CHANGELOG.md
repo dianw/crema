@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Migration Notes
 - All existing functionality remains compatible
 - No breaking changes for end users
-- Developers should run `npm install` to get new dependencies
+- Developers should run `yarn install` to get new dependencies
 - TypeScript errors may appear due to improved type checking
 
 ## [1.0.0] - Previous Release
